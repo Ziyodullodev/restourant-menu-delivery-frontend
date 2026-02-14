@@ -16,19 +16,11 @@
 
   &__table {
     display: flex;
-    align-items: baseline;
-    gap: 6px;
+    align-items: center;
     background-color: var(--bg-secondary-color);
-    padding: 8px 14px;
-    border-radius: 14px;
+    padding: 8px 12px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);
-
-    &-label {
-      font-size: 13px;
-      color: var(--text-gray);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
 
     &-number {
       font-size: 16px;

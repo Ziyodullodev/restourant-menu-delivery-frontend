@@ -13,18 +13,15 @@ interface IProps {
 
 export function Header(props: IProps): React.ReactElement {
   const { activeIndex, setActiveIndex, setSwiperInstance, setUserScroll } = props;
-  const { language, setLanguage, t } = useI18n();
+  const { language, setLanguage } = useI18n();
   const { tableNumber } = useTable();
 
   return (
     <header className="header">
       <div className="header__top">
-        {tableNumber && (
-          <div className="header__table">
-            <span className="header__table-label">{t.table}</span>
-            <span className="header__table-number">#{tableNumber}</span>
-          </div>
-        )}
+        <div className="header__table">
+          <span className="header__table-number">#{tableNumber || "1"}</span>
+        </div>
         <div className="header__langs">
           {(["ru", "uz"] as Language[]).map((l) => (
             <button
