@@ -4,7 +4,7 @@ import "./profile-page.scss";
 
 export function ProfilePage(): React.ReactElement {
     const navigate = useNavigate();
-    const { t } = useI18n();
+    const { t, language } = useI18n();
 
     const menuItems = [
         {
@@ -13,9 +13,19 @@ export function ProfilePage(): React.ReactElement {
             onClick: () => console.log("My Addresses"),
         },
         {
+            icon: "🏪",
+            label: language === "ru" ? "Наши филиалы" : "Bizning filiallar",
+            onClick: () => console.log("Locations"),
+        },
+        {
             icon: "💳",
             label: t.bankCards,
             onClick: () => navigate("/bank-cards"),
+        },
+        {
+            icon: "💬",
+            label: language === "ru" ? "Обратная связь" : "Fikr-mulohaza",
+            onClick: () => console.log("Feedback"),
         },
         {
             icon: "ℹ️",

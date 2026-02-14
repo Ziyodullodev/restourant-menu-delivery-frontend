@@ -10,6 +10,8 @@ interface Translations {
     profile: string;
 
     // Header
+    table: string;
+    tableNumber: string;
     delivery: string;
     pickup: string;
 
@@ -54,6 +56,8 @@ const translations: Record<Language, Translations> = {
         profile: "Profil",
 
         // Header
+        table: "Stol",
+        tableNumber: "Stol raqami",
         delivery: "Yetkazib berish",
         pickup: "Olib ketish",
 
@@ -96,6 +100,8 @@ const translations: Record<Language, Translations> = {
         profile: "Профиль",
 
         // Header
+        table: "Стол",
+        tableNumber: "Номер стола",
         delivery: "Доставка",
         pickup: "Самовывоз",
 
@@ -103,7 +109,7 @@ const translations: Record<Language, Translations> = {
         cartTitle: "Корзина",
         clearCart: "Очистить",
         total: "Итого:",
-        placeOrder: "Оформить заказ",
+        placeOrder: "Заказать",
         emptyCart: "Корзина пуста",
         emptyCartMessage: "Добавьте товары",
         addToCart: "В корзину",
@@ -141,11 +147,18 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-    const [language, setLanguage] = useState<Language>("ru");
+    const [language, setLanguage] = useState<Language>(() => {
+        return (localStorage.getItem("language") as Language) || "ru";
+    });
+
+    const handleSetLanguage = (lang: Language) => {
+        setLanguage(lang);
+        localStorage.setItem("language", lang);
+    };
 
     const value: I18nContextType = {
         language,
-        setLanguage,
+        setLanguage: handleSetLanguage,
         t: translations[language],
     };
 

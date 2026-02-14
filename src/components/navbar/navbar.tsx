@@ -4,6 +4,7 @@ import "./navbar.scss";
 import { mockData } from "../mock/mock";
 import { memo, useRef } from "react";
 import { FreeMode } from "swiper/modules";
+import { useI18n } from "@/contexts/i18n-context";
 
 interface IProps {
   setSwiperInstance: React.Dispatch<React.SetStateAction<Swiper | null>>;
@@ -16,6 +17,7 @@ function Copmonent(props: IProps): React.ReactElement {
   const { setSwiperInstance, setUserScroll, setActiveIndex, activeIndex } =
     props;
   const navbarRef = useRef<HTMLDivElement | null>(null);
+  const { language } = useI18n();
   const sectionOffset = 112 - 11;
 
   const clickHandler = (activeIndex: number) => {
@@ -52,14 +54,15 @@ function Copmonent(props: IProps): React.ReactElement {
         slideToClickedSlide
         freeMode
       >
-        {mockData?.map((i, index) => (
-          <SwiperSlide key={i?.id} className="navbar__item">
+        {mockData?.map((category, index) => (
+          <SwiperSlide key={category.id} className="navbar__item">
             <button
               onClick={() => clickHandler(index)}
               className="navbar__btn"
               data-active={activeIndex === index}
             >
-              {i?.title}
+              <span className="navbar__icon">{category.icon}</span>
+              {category.title[language as "ru" | "uz"]}
             </button>
           </SwiperSlide>
         ))}

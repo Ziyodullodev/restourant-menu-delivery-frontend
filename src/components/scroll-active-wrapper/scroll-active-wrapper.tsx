@@ -52,13 +52,11 @@ export function ScrollActiveWrapper(props: IProps): React.ReactElement {
 
   return (
     <div ref={sectionContainerRef} id="sections-container">
-      {mockData?.map((i) => {
+      {mockData?.map((category) => {
         return (
           <Section
-            key={i?.id}
-            sectionId={i?.id}
-            title={i?.title}
-            childs={i?.childs}
+            key={category.id}
+            category={category}
           />
         );
       })}

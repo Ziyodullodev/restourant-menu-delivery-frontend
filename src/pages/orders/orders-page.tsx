@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useI18n } from "@/contexts/i18n-context";
+import { useTable } from "@/contexts/table-context";
 import "./orders-page.scss";
 
 type OrderStatus = "all" | "active" | "delivering" | "completed";
 
 export function OrdersPage(): React.ReactElement {
     const { t } = useI18n();
+    const { tableNumber } = useTable();
     const [activeTab, setActiveTab] = useState<OrderStatus>("all");
 
     // Mock data - in real app this would come from API
@@ -21,7 +23,15 @@ export function OrdersPage(): React.ReactElement {
     return (
         <div className="orders-page">
             <div className="orders-page__header">
-                <h1 className="orders-page__title">{t.ordersTitle}</h1>
+                <div className="orders-page__header-left">
+                    <h1 className="orders-page__title">{t.ordersTitle}</h1>
+                    {tableNumber && (
+                        <div className="orders-page__table">
+                            <span className="orders-page__table-label">{t.table}</span>
+                            <span className="orders-page__table-number">#{tableNumber}</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="orders-page__tabs">

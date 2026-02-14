@@ -1,17 +1,20 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { IAddon } from "@/components/mock/mock";
 
 export interface CartItem {
-    id: string;
+    id: string; // Unique cart item ID (e.g. "p1-cheese")
+    productId: string; // Original product ID
     name: string;
     price: number;
     quantity: number;
     image: string;
     weight?: string;
+    addons?: IAddon[];
 }
 
 interface CartContextType {
     items: CartItem[];
-    addItem: (item: Omit<CartItem, "quantity">) => void;
+    addItem: (item: Omit<CartItem, "id" | "quantity">) => void;
     removeItem: (id: string) => void;
     updateQuantity: (id: string, quantity: number) => void;
     clearCart: () => void;
@@ -39,15 +42,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
     }, [items]);
 
-    const addItem = (item: Omit<CartItem, "quantity">) => {
+    const addItem = (item: Omit<CartItem, "id" | "quantity">) => {
         setItems((prev) => {
-            const existingItem = prev.find((i) => i.id === item.id);
+            // Generate a unique ID based on product ID and sorted addons
+            const addonIds = item.addons?.map((a) => a.id).sort().join("-") || "";
+            const uniqueId = `${item.productId}-${addonIds}`;
+
+            const existingItem = prev.find((i) => i.id === uniqueId);
+
             if (existingItem) {
                 return prev.map((i) =>
-                    i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+                    i.id === uniqueId ? { ...i, quantity: i.quantity + 1 } : i
                 );
             }
-            return [...prev, { ...item, quantity: 1 }];
+
+            return [...prev, { ...item, id: uniqueId, quantity: 1 }];
         });
     };
 

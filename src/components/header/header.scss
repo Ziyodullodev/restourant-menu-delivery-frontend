@@ -10,11 +10,35 @@
 
   &__top {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
   }
 
+  &__table {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    background-color: var(--bg-secondary-color);
+    padding: 8px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    &-label {
+      font-size: 13px;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    &-number {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent-color);
+    }
+  }
+
   &__langs {
+    margin-left: auto;
     display: flex;
     background-color: var(--bg-secondary-color);
     padding: 4px;

@@ -1,10 +1,8 @@
 import Swiper from "swiper";
 import { Navbar } from "../navbar/navbar";
-import { DeliveryIcon } from "../icons/delivery-icon";
-import { PickupIcon } from "../icons/pickup-icon";
 import { useI18n, Language } from "@/contexts/i18n-context";
+import { useTable } from "@/contexts/table-context";
 import "./header.scss";
-import { useState } from "react";
 
 interface IProps {
   setSwiperInstance: React.Dispatch<React.SetStateAction<Swiper | null>>;
@@ -15,12 +13,18 @@ interface IProps {
 
 export function Header(props: IProps): React.ReactElement {
   const { activeIndex, setActiveIndex, setSwiperInstance, setUserScroll } = props;
-  const [orderType, setOrderType] = useState<"delivery" | "pickup">("delivery");
   const { language, setLanguage, t } = useI18n();
+  const { tableNumber } = useTable();
 
   return (
     <header className="header">
       <div className="header__top">
+        {tableNumber && (
+          <div className="header__table">
+            <span className="header__table-label">{t.table}</span>
+            <span className="header__table-number">#{tableNumber}</span>
+          </div>
+        )}
         <div className="header__langs">
           {(["ru", "uz"] as Language[]).map((l) => (
             <button
@@ -35,22 +39,7 @@ export function Header(props: IProps): React.ReactElement {
         </div>
       </div>
 
-      <div className="header__toggles">
-        <button
-          className={`header__toggle ${orderType === "delivery" ? "header__toggle--active" : ""}`}
-          onClick={() => setOrderType("delivery")}
-        >
-          <DeliveryIcon />
-          {t.delivery}
-        </button>
-        <button
-          className={`header__toggle ${orderType === "pickup" ? "header__toggle--active" : ""}`}
-          onClick={() => setOrderType("pickup")}
-        >
-          <PickupIcon />
-          {t.pickup}
-        </button>
-      </div>
+      {/* Removed delivery toggles as requested */}
 
       <Navbar
         {...{ activeIndex, setActiveIndex, setSwiperInstance, setUserScroll }}

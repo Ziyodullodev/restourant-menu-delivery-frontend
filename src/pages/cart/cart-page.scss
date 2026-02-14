@@ -11,6 +11,36 @@
         margin-bottom: 20px;
     }
 
+    &__header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__table {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        background-color: var(--bg-secondary-color);
+        padding: 4px 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        width: fit-content;
+
+        &-label {
+            font-size: 11px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        &-number {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+    }
+
     &__title {
         font-size: 24px;
         font-weight: 600;
@@ -70,7 +100,7 @@
 
     &__footer {
         position: fixed;
-        bottom: 60px;
+        bottom: 80px;
         left: 0;
         right: 0;
         background: var(--bg-secondary-color);
@@ -175,6 +205,19 @@
         font-size: 12px;
         color: var(--text-gray);
         margin-bottom: 4px;
+    }
+
+    &__addons {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin-bottom: 4px;
+    }
+
+    &__addon {
+        font-size: 12px;
+        color: var(--text-gray);
+        opacity: 0.8;
     }
 
     &__price {

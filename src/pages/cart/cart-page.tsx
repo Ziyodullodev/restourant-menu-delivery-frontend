@@ -4,15 +4,27 @@ import { numberDigits } from "@/helpers/number-digits";
 import { MinusIcon } from "@/components/icons/minus-icon";
 import { PluseIcon } from "@/components/icons/pluse-icon";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useTable } from "@/contexts/table-context";
+import { SuccessModal } from "@/components/success-modal/success-modal";
 import "./cart-page.scss";
 
 export function CartPage(): React.ReactElement {
     const navigate = useNavigate();
     const { items, updateQuantity, removeItem, clearCart, totalPrice } = useCart();
-    const { t } = useI18n();
+    const { t, language } = useI18n();
+    const { tableNumber } = useTable();
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     const handlePlaceOrder = () => {
-        navigate("/checkout");
+        // Here you would normally send the order to the backend
+        setIsSuccessModalOpen(true);
+    };
+
+    const handleSuccessConfirm = () => {
+        setIsSuccessModalOpen(false);
+        clearCart();
+        navigate("/orders");
     };
 
     if (items.length === 0) {
@@ -33,9 +45,17 @@ export function CartPage(): React.ReactElement {
     return (
         <div className="cart-page">
             <div className="cart-page__header">
-                <h1 className="cart-page__title">
-                    {t.cartTitle} ({items.length})
-                </h1>
+                <div className="cart-page__header-left">
+                    <h1 className="cart-page__title">
+                        {t.cartTitle} ({items.length})
+                    </h1>
+                    {tableNumber && (
+                        <div className="cart-page__table">
+                            <span className="cart-page__table-label">{t.table}</span>
+                            <span className="cart-page__table-number">#{tableNumber}</span>
+                        </div>
+                    )}
+                </div>
                 <button className="cart-page__clear" onClick={clearCart}>
                     {t.clearCart}
                 </button>
@@ -53,6 +73,15 @@ export function CartPage(): React.ReactElement {
 
                         <div className="cart-item__info">
                             <h3 className="cart-item__name">{item.name}</h3>
+                            {item.addons && item.addons.length > 0 && (
+                                <div className="cart-item__addons">
+                                    {item.addons.map((addon) => (
+                                        <div key={addon.id} className="cart-item__addon">
+                                            + {addon.name[language as "ru" | "uz"]}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                             {item.weight && <div className="cart-item__weight">{item.weight}</div>}
                             <div className="cart-item__price">
                                 {numberDigits(item.price * item.quantity)} {t.sum}
@@ -96,6 +125,12 @@ export function CartPage(): React.ReactElement {
                     {t.placeOrder}
                 </button>
             </div>
+
+            <SuccessModal
+                isOpen={isSuccessModalOpen}
+                onClose={handleSuccessConfirm}
+                language={language}
+            />
         </div>
     );
 }
