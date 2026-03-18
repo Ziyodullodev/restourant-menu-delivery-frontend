@@ -1,19 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useTable } from "@/contexts/table-context";
+import { fetchOrderHistory } from "@/services/api.service";
+import { IApiOrder, IApiOrderItem } from "@/types/api.types";
+import { numberDigits } from "@/helpers/number-digits";
 import "./orders-page.scss";
 
-type OrderStatus = "all" | "active" | "delivering" | "completed";
+type TabStatus = "all" | "active" | "delivering" | "completed";
 
 export function OrdersPage(): React.ReactElement {
   const { t } = useI18n();
   const { tableNumber } = useTable();
-  const [activeTab, setActiveTab] = useState<OrderStatus>("all");
+  const [activeTab, setActiveTab] = useState<TabStatus>("all");
+  const [orders, setOrders] = useState<IApiOrder[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock data - in real app this would come from API
-  const orders: unknown[] = [];
+  useEffect(() => {
+    setIsLoading(false);
+    fetchOrderHistory()
+      .then((data) => setOrders(data.results))
+      .catch((err) => console.error("Orders fetch error:", err))
+      .finally(() => setIsLoading(false));
+  }, []);
 
-  const tabs: { id: OrderStatus; label: string }[] = [
+  const getFilteredOrders = () => {
+    if (activeTab === "all") return orders;
+    if (activeTab === "active") {
+      return orders.filter((o: IApiOrder) => ["new", "restourant_accepted", "cooking", "coked"].includes(o.status));
+    }
+    if (activeTab === "delivering") {
+      return orders.filter((o: IApiOrder) => o.status === "delivering");
+    }
+    if (activeTab === "completed") {
+      return orders.filter((o: IApiOrder) => o.status === "completed" || o.status === "delivered");
+    }
+    return orders;
+  };
+
+  const filteredOrders = getFilteredOrders();
+
+  const tabs: { id: TabStatus; label: string }[] = [
     { id: "all", label: t.all },
     { id: "active", label: t.active },
     { id: "delivering", label: t.delivering },
@@ -47,9 +73,12 @@ export function OrdersPage(): React.ReactElement {
       </div>
 
       <div className="orders-page__content">
-        {orders.length === 0 ? (
+        {isLoading ? (
+          <div className="orders-page__loading">...</div>
+        ) : filteredOrders.length === 0 ? (
           <div className="orders-page__empty">
             <div className="orders-page__empty-icon">
+              {/* SVG icon remains same */}
               <svg
                 width="120"
                 height="120"
@@ -94,7 +123,31 @@ export function OrdersPage(): React.ReactElement {
           </div>
         ) : (
           <div className="orders-page__list">
-            {/* Orders will be displayed here */}
+            {filteredOrders.map((order: IApiOrder) => (
+              <div key={order.id} className="order-card">
+                <div className="order-card__header">
+                  <span className="order-card__number">#{order.id}</span>
+                  <span className={`order-card__status order-card__status--${order.status}`}>
+                    {order.status_display || order.status}
+                  </span>
+                </div>
+                <div className="order-card__content">
+                  <div className="order-card__items">
+                    {order.items.map((item: IApiOrderItem) => (
+                      <div key={item.id} className="order-card__item">
+                        {item.product.name_uz} x {item.amount}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="order-card__total">
+                    {numberDigits(order.current_price)} {t.sum}
+                  </div>
+                </div>
+                <div className="order-card__date">
+                  {new Date(order.created_at).toLocaleString()}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

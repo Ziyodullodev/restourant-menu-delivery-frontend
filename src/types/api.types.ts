@@ -59,3 +59,44 @@ export interface IApiCartItem {
   amount: number;
   ingredients?: IApiAddon[];
 }
+
+// ─── Order Types ─────────────────────────────────────────────────────────────
+
+export type OrderStatus =
+  | "new"
+  | "restourant_accepted"
+  | "cooking"
+  | "coked"
+  | "delivering"
+  | "delivered"
+  | "restourant_canceled"
+  | "client_canceled"
+  | "completed";
+
+export interface IApiOrderItem {
+  id: number;
+  product: {
+    id: string | number;
+    name_uz: string;
+    current_price: number;
+    small_image: string;
+  };
+  amount: number;
+  created_at: string;
+  ingredients: IApiAddon[];
+}
+
+export interface IApiOrder {
+  id: number;
+  organization_branches: number | string;
+  status: OrderStatus;
+  status_display: string;
+  original_price: number;
+  current_price: number;
+  items: IApiOrderItem[];
+  created_at: string;
+  delivery_with?: "organization_delivery" | "other_delivery" | "take_away" | "in_restaurant";
+  pay_with?: "cash" | "card" | "click" | "payme" | "uzumbank" | string;
+  user_adress?: string | null;
+  restourant_session?: string | null;
+}

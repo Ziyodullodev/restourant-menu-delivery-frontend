@@ -45,10 +45,9 @@ interface CartContextType {
   totalPrice: number;
   /** cart-summary ni backend dan qayta yuklash */
   refreshCartSummary: () => void;
-  placeOrder: (data: {
-    is_delivery: boolean;
-    payment_type?: "cash" | "card";
-    address?: string;
+  placeOrder: (data?: {
+    delivery_with?: "organization_delivery" | "other_delivery" | "take_away" | "in_restaurant";
+    pay_with?: string;
     comment?: string;
   }) => Promise<void>;
 }
@@ -255,17 +254,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const { tableNumber } = useTable();
 
-  const placeOrder = async (orderData: {
-    is_delivery: boolean;
-    payment_type?: "cash" | "card";
-    address?: string;
+  const placeOrder = async (orderData?: {
+    delivery_with?: "organization_delivery" | "other_delivery" | "take_away" | "in_restaurant";
+    pay_with?: string;
     comment?: string;
   }) => {
     if (!authData) return;
     try {
       await createOrder({
-        ...orderData,
-        table: tableNumber,
+        branch: authData.session?.organization?.id,
+        delivery_with: orderData?.delivery_with ?? (tableNumber ? "in_restaurant" : "take_away"),
+        pay_with: orderData?.pay_with ?? "cash",
+        restourant_session: authData.session?.session_id,
+        user_adress: null, // Address ID agar delivery bo'lsa
+        original_price: totalPrice, // Discount bo'lmasa ikkalasi bir xil
+        current_price: totalPrice,
       });
       clearCart();
     } catch (error) {
@@ -273,7 +276,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   };
-
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
     (sum, item) => sum + item.price * item.quantity,

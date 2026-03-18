@@ -21,10 +21,7 @@ export function CartPage(): React.ReactElement {
   const handlePlaceOrder = async () => {
     setIsLoading(true);
     try {
-      await placeOrder({
-        is_delivery: false, // TMA odatda restoranning o'zida stol uchun ishlatiladi
-        comment: "",
-      });
+      await placeOrder(); // Default holatda context'dagi mantiq ishlaydi
       setIsSuccessModalOpen(true);
     } catch (error) {
       alert(language === "uz" ? "Xatolik yuz berdi" : "Произошла ошибка");

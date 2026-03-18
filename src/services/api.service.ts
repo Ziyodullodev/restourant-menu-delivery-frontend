@@ -4,6 +4,7 @@ import {
   ICartSummary,
   IApiResponse,
   IApiCartItem,
+  IApiOrder,
 } from "@/types/api.types";
 
 export type { ICartSummary };
@@ -147,17 +148,46 @@ export const deleteAllCartItems = async (): Promise<void> => {
 
 /** Buyurtma berish (Savatni buyurtmaga aylantirish) */
 export const createOrder = async (data: {
-  is_delivery: boolean;
-  payment_type?: "cash" | "card";
-  address?: string;
-  comment?: string;
-  table?: string | null;
+  branch?: string | number;
+  delivery_with:
+    | "organization_delivery"
+    | "other_delivery"
+    | "take_away"
+    | "in_restaurant";
+  pay_with: "cash" | "card" | "click" | "payme" | "uzumbank" | string;
+  user_adress?: string | null;
+  restourant_session?: string | null;
+  original_price: number;
+  current_price: number;
 }): Promise<any> => {
-  const res = await fetch(`${BASE_URL}/r-client/order/create/`, {
+  const res = await fetch(`${BASE_URL}/r-client/order/order/create/`, {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(`Order placement failed: ${res.status}`);
+  return res.json();
+};
+
+/** Buyurtmalar tarixini olish */
+export const fetchOrderHistory = async (params?: {
+  branch?: string;
+  page?: number;
+}): Promise<IApiResponse<IApiOrder>> => {
+  const url = new URL(`${BASE_URL}/r-client/order/order/history/`);
+  if (params?.branch) url.searchParams.set("branch", params.branch);
+  if (params?.page) url.searchParams.set("page", params.page.toString());
+
+  const res = await fetch(url.toString(), { headers: authHeaders() });
+  if (!res.ok) throw new Error(`Order history fetch failed: ${res.status}`);
+  return res.json();
+};
+
+/** Buyurtma tafsilotlarini olish */
+export const fetchOrderDetail = async (orderId: string | number): Promise<IApiOrder> => {
+  const res = await fetch(`${BASE_URL}/r-client/order/order/${orderId}/`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error(`Order detail fetch failed: ${res.status}`);
   return res.json();
 };
