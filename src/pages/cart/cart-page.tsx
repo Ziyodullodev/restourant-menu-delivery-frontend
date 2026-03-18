@@ -11,15 +11,26 @@ import "./cart-page.scss";
 
 export function CartPage(): React.ReactElement {
   const navigate = useNavigate();
-  const { items, updateQuantity, removeItem, clearCart, totalPrice } =
+  const { items, updateQuantity, removeItem, clearCart, totalPrice, placeOrder } =
     useCart();
   const { t, language } = useI18n();
   const { tableNumber } = useTable();
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handlePlaceOrder = () => {
-    // Here you would normally send the order to the backend
-    setIsSuccessModalOpen(true);
+  const handlePlaceOrder = async () => {
+    setIsLoading(true);
+    try {
+      await placeOrder({
+        is_delivery: false, // TMA odatda restoranning o'zida stol uchun ishlatiladi
+        comment: "",
+      });
+      setIsSuccessModalOpen(true);
+    } catch (error) {
+      alert(language === "uz" ? "Xatolik yuz berdi" : "Произошла ошибка");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSuccessConfirm = () => {
@@ -128,8 +139,12 @@ export function CartPage(): React.ReactElement {
             {numberDigits(totalPrice)} {t.sum}
           </span>
         </div>
-        <button className="cart-page__order-btn" onClick={handlePlaceOrder}>
-          {t.placeOrder}
+        <button
+          className="cart-page__order-btn"
+          onClick={handlePlaceOrder}
+          disabled={isLoading}
+        >
+          {isLoading ? "..." : t.placeOrder}
         </button>
       </div>
 

@@ -92,10 +92,9 @@ export const createCartItem = async (data: {
   if (!res.ok) {
     if (res.status === 400) {
       // Backend allaqachon mavjud bo'lsa 400 qaytaradi, lekin miqdorni o'zi oshiradi
-      // Frontendga buni xato deb ko'rsatmasligimiz mumkin
+      // Shuning uchun bu holatda error tashlamaymiz
       const errData = await res.json();
-      console.log("Cart item exists or 400 error:", errData);
-      // Agar javobda 'detail' yoki shunga o'xshash xabar bo'lsa, buni catch qilish kerak
+      return errData;
     }
     throw new Error(`Cart create failed: ${res.status}`);
   }
@@ -133,4 +132,32 @@ export const fetchCartItems = async (): Promise<IApiCartItem[]> => {
   if (!res.ok) throw new Error(`Cart list fetch failed: ${res.status}`);
   const data: IApiResponse<IApiCartItem> = await res.json();
   return data.results;
+};
+/** Savatdagi barcha elementlarni bir yo'la o'chirish (Bulk delete) */
+export const deleteAllCartItems = async (): Promise<void> => {
+  const res = await fetch(`${BASE_URL}/r-client/order/cart/delete_all/`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  // Agar delete_all yo'q bo'lsa, 404 berishi mumkin, bu holda local o'chirish davom etadi
+  if (!res.ok && res.status !== 404) {
+    throw new Error(`Cart bulk delete failed: ${res.status}`);
+  }
+};
+
+/** Buyurtma berish (Savatni buyurtmaga aylantirish) */
+export const createOrder = async (data: {
+  is_delivery: boolean;
+  payment_type?: "cash" | "card";
+  address?: string;
+  comment?: string;
+  table?: string | null;
+}): Promise<any> => {
+  const res = await fetch(`${BASE_URL}/r-client/order/create/`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`Order placement failed: ${res.status}`);
+  return res.json();
 };

@@ -14,9 +14,12 @@ import {
   updateCartItem,
   deleteCartItem,
   fetchCartItems,
+  deleteAllCartItems,
+  createOrder,
 } from "@/services/api.service";
 import { useAuth } from "./auth-context";
 import { useI18n } from "./i18n-context";
+import { useTable } from "./table-context";
 
 export interface CartItem {
   id: string; // Unikal local ID: "productId-addon1-addon2"
@@ -42,6 +45,12 @@ interface CartContextType {
   totalPrice: number;
   /** cart-summary ni backend dan qayta yuklash */
   refreshCartSummary: () => void;
+  placeOrder: (data: {
+    is_delivery: boolean;
+    payment_type?: "cash" | "card";
+    address?: string;
+    comment?: string;
+  }) => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -157,10 +166,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
             i.id === uniqueId ? { ...i, backendId: res.id } : i,
           ),
         );
+        // Summary ni yangilaymiz (badge ko'rinishi uchun)
+        refreshCartSummary();
       } catch (error: unknown) {
         console.warn("API create note: Might already be in cart", error);
-        // Documentation bo'yicha 400 bo'lsa ham backend +1 qilgan, shuning uchun error tashlamaymiz
-        // Lekin backendId ni yangilash uchun refetch qilsak yaxshi bo'ladi
         refreshCartSummary();
       }
     }
@@ -177,6 +186,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (authData && backendId) {
       try {
         await deleteCartItem(backendId);
+        refreshCartSummary();
       } catch (error) {
         console.error("Cart item delete error:", error);
       }
@@ -201,6 +211,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (authData && backendId) {
       try {
         await updateCartItem(backendId, quantity);
+        refreshCartSummary();
       } catch (error) {
         console.error("Cart quantity update error:", error);
       }
@@ -211,10 +222,56 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const clearCart = () => {
-    // Hozircha backenda clearCart API yo'q bo'lsa, elementma-element o'chirish kerak yoki shunchaki lokal
-    // Lekin user logout bo'lganda bu chaqiriladi
+  const clearCart = async () => {
+    const itemsToDelete = [...items];
+
+    // Optimistik UI: Darhol lokalni tozalaymiz
     setItems([]);
+    setCartSummary({});
+
+    if (authData) {
+      try {
+        // Birinchi navbatda barcha elementlarni bir yo'la o'chirishga harakat qilamiz
+        await deleteAllCartItems();
+        refreshCartSummary();
+      } catch (err) {
+        console.warn("Bulk delete failed, falling back to individual deletes", err);
+        // Agar bulk o'chirish o'xshamasa, elementma-element o'chiramiz
+        if (itemsToDelete.length > 0) {
+          try {
+            await Promise.all(
+              itemsToDelete
+                .filter((i) => i.backendId)
+                .map((i) => deleteCartItem(i.backendId!)),
+            );
+            refreshCartSummary();
+          } catch (error) {
+            console.error("Clear cart sequential error:", error);
+          }
+        }
+      }
+    }
+  };
+
+  const { tableNumber } = useTable();
+
+  const placeOrder = async (orderData: {
+    is_delivery: boolean;
+    payment_type?: "cash" | "card";
+    address?: string;
+    comment?: string;
+  }) => {
+    if (!authData) return;
+    try {
+      await createOrder({
+        ...orderData,
+        table: tableNumber,
+      });
+      clearCart();
+    } catch (error) {
+      console.error("Place order error:", error);
+      throw error;
+    }
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -235,6 +292,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         totalItems,
         totalPrice,
         refreshCartSummary,
+        placeOrder,
       }}
     >
       {children}
