@@ -63,7 +63,7 @@ const mockData: ICategory[] = [
     id: "first",
     title: {
       ru: "Сети",
-      uz: "Setlar"
+      uz: "Setlar",
     },
     icon: "🍱",
     products: [
@@ -71,7 +71,7 @@ const mockData: ICategory[] = [
         id: "p1",
         name: {
           ru: "Фреш Бургер с курицей",
-          uz: "Tovuqli Fresh Burger"
+          uz: "Tovuqli Fresh Burger",
         },
         price: 43000,
         weight: "251 г",
@@ -79,11 +79,11 @@ const mockData: ICategory[] = [
         image: example,
         ingredients: {
           ru: "Куриное филе, панировка, салат, томаты, соус",
-          uz: "Tovuq filesi, panira, salat, pomidor, sous"
+          uz: "Tovuq filesi, panira, salat, pomidor, sous",
         },
         description: {
           ru: "Свежий бургер с сочной курицей и овощами",
-          uz: "Mazali tovuq va sabzavotli yangi burger"
+          uz: "Mazali tovuq va sabzavotli yangi burger",
         },
         addons: mockAddons,
       },
@@ -91,7 +91,7 @@ const mockData: ICategory[] = [
         id: "p2",
         name: {
           ru: "Комбо Сет Макси",
-          uz: "Kombo Set Maksi"
+          uz: "Kombo Set Maksi",
         },
         price: 85000,
         weight: "650 г",
@@ -99,21 +99,21 @@ const mockData: ICategory[] = [
         image: example,
         ingredients: {
           ru: "2 бургера, картофель фри, 2 напитка",
-          uz: "2 burger, kartoshka fri, 2 ichimlik"
+          uz: "2 burger, kartoshka fri, 2 ichimlik",
         },
         description: {
           ru: "Лучший выбор для двоих",
-          uz: "Ikki kishi uchun eng yaxshi tanlov"
+          uz: "Ikki kishi uchun eng yaxshi tanlov",
         },
         addons: mockAddons,
-      }
+      },
     ],
   },
   {
     id: "second",
     title: {
       ru: "Курочка",
-      uz: "Tovuq"
+      uz: "Tovuq",
     },
     icon: "🍗",
     products: [
@@ -121,7 +121,7 @@ const mockData: ICategory[] = [
         id: "p3",
         name: {
           ru: "Крылышки Баффало",
-          uz: "Buffalo qanotchalar"
+          uz: "Buffalo qanotchalar",
         },
         price: 35000,
         weight: "200 г",
@@ -129,25 +129,25 @@ const mockData: ICategory[] = [
         image: example,
         ingredients: {
           ru: "Куриные крылышки, острый соус",
-          uz: "Tovuq qanotchalari, achchiq sous"
+          uz: "Tovuq qanotchalari, achchiq sous",
         },
         description: {
           ru: "Острые и сочные крылышки",
-          uz: "Achchiq va mazali qanotchalar"
+          uz: "Achchiq va mazali qanotchalar",
         },
         addons: mockAddons,
-      }
+      },
     ],
   },
   {
     id: "third",
     title: {
       ru: "Снеки",
-      uz: "Sneklar"
+      uz: "Sneklar",
     },
     icon: "🍟",
-    products: []
-  }
+    products: [],
+  },
 ];
 
 export { mockData };

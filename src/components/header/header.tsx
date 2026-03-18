@@ -12,7 +12,8 @@ interface IProps {
 }
 
 export function Header(props: IProps): React.ReactElement {
-  const { activeIndex, setActiveIndex, setSwiperInstance, setUserScroll } = props;
+  const { activeIndex, setActiveIndex, setSwiperInstance, setUserScroll } =
+    props;
   const { language, setLanguage } = useI18n();
   const { tableNumber } = useTable();
 

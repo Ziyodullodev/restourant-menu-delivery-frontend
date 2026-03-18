@@ -1,68 +1,68 @@
 .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 80px;
-    background-color: var(--bg-primary-color);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-color: var(--bg-primary-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 8px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1000;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+
+  &__item {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
     align-items: center;
-    padding: 0 8px 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    z-index: 1000;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+    gap: 4px;
+    flex: 1;
+    color: var(--text-gray);
+    transition: all 0.2s;
 
-    &__item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        flex: 1;
-        color: var(--text-gray);
-        transition: all 0.2s;
+    &--active {
+      color: var(--accent-color);
 
-        &--active {
-            color: var(--accent-color);
-
-            .bottom-nav__icon {
-                transform: translateY(-2px);
-            }
-        }
+      .bottom-nav__icon {
+        transform: translateY(-2px);
+      }
     }
+  }
 
-    &__icon {
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.2s;
-        position: relative;
+  &__icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    position: relative;
 
-        svg {
-            width: 100%;
-            height: 100%;
-        }
+    svg {
+      width: 100%;
+      height: 100%;
     }
+  }
 
-    &__badge {
-        position: absolute;
-        top: -6px;
-        right: -8px;
-        background: #20AD4E;
-        color: white;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 6px;
-        border-radius: 10px;
-        min-width: 18px;
-        text-align: center;
-        line-height: 1.2;
-    }
+  &__badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: #20ad4e;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1.2;
+  }
 
-    &__label {
-        font-size: 11px;
-        font-weight: 500;
-    }
+  &__label {
+    font-size: 11px;
+    font-weight: 500;
+  }
 }

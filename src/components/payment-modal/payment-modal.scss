@@ -1,124 +1,124 @@
 .payment-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 2000;
-    animation: fadeIn 0.2s ease-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease-out;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 
-    to {
-        opacity: 1;
-    }
+  to {
+    opacity: 1;
+  }
 }
 
 .payment-modal {
-    background: var(--bg-secondary-color);
-    border-radius: 24px 24px 0 0;
-    width: 100%;
-    max-width: 500px;
-    padding: 24px;
-    animation: slideUp 0.3s ease-out;
+  background: var(--bg-secondary-color);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 500px;
+  padding: 24px;
+  animation: slideUp 0.3s ease-out;
 
-    @keyframes slideUp {
-        from {
-            transform: translateY(100%);
-        }
-
-        to {
-            transform: translateY(0);
-        }
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
     }
 
-    &__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
+    to {
+      transform: translateY(0);
     }
+  }
 
-    &__title {
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--text-primary-color);
-        margin: 0;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary-color);
+    margin: 0;
+  }
+
+  &__close {
+    background: transparent;
+    border: none;
+    color: var(--text-gray);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--text-primary-color);
     }
+  }
 
-    &__close {
-        background: transparent;
-        border: none;
-        color: var(--text-gray);
-        cursor: pointer;
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: color 0.2s;
-
-        &:hover {
-            color: var(--text-primary-color);
-        }
-    }
-
-    &__methods {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
+  &__methods {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
 .payment-method-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--card-bg);
+  border: none;
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: left;
+
+  &:hover {
+    background: var(--bg-primary-color);
+    transform: translateX(4px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
-    gap: 16px;
-    background: var(--card-bg);
-    border: none;
-    border-radius: 16px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-    text-align: left;
+    justify-content: center;
+    flex-shrink: 0;
 
-    &:hover {
-        background: var(--bg-primary-color);
-        transform: translateX(4px);
+    svg {
+      width: 24px;
+      height: 24px;
     }
+  }
 
-    &:active {
-        transform: scale(0.98);
-    }
-
-    &__icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.05);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-
-        svg {
-            width: 24px;
-            height: 24px;
-        }
-    }
-
-    &__label {
-        font-size: 16px;
-        font-weight: 500;
-        color: var(--text-primary-color);
-        flex: 1;
-    }
+  &__label {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary-color);
+    flex: 1;
+  }
 }

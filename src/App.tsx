@@ -9,6 +9,8 @@ import { CartPage } from "./pages/cart/cart-page";
 import { OrdersPage } from "./pages/orders/orders-page";
 import { ProfilePage } from "./pages/profile/profile-page";
 import { BankCardsPage } from "./pages/bank-cards/bank-cards-page";
+import { AuthProvider } from "./contexts/auth-context";
+import { MenuProvider } from "./contexts/menu-context";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -20,31 +22,31 @@ export function App(): React.ReactElement {
     tg.ready();
     tg.expand();
     tg.enableClosingConfirmation();
-
-    // Set dynamic colors from "backend" (simulated)
-    document.documentElement.style.setProperty('--accent-color', '#3ab64e');
-    document.documentElement.style.setProperty('--price-color', '#3ab64e');
   }, []);
 
   return (
-    <I18nProvider>
-      <TableProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <div className="app-container">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/orders" element={<OrdersPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/bank-cards" element={<BankCardsPage />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-              <BottomNav />
-            </div>
-          </BrowserRouter>
-        </CartProvider>
-      </TableProvider>
-    </I18nProvider>
+    <AuthProvider>
+      <I18nProvider>
+        <TableProvider>
+          <MenuProvider>
+            <CartProvider>
+              <BrowserRouter>
+                <div className="app-container">
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/cart" element={<CartPage />} />
+                    <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/bank-cards" element={<BankCardsPage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                  <BottomNav />
+                </div>
+              </BrowserRouter>
+            </CartProvider>
+          </MenuProvider>
+        </TableProvider>
+      </I18nProvider>
+    </AuthProvider>
   );
 }

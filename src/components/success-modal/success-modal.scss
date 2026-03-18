@@ -1,106 +1,106 @@
 .success-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 3000;
-    padding: 20px;
-    animation: fadeIn 0.3s ease-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .success-modal {
-    background: var(--bg-secondary-color);
-    border-radius: 24px;
+  background: var(--bg-secondary-color);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 24px;
+  text-align: center;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  &__icon {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+
+    svg {
+      animation: checkmark 0.5s ease-out 0.2s both;
+    }
+  }
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary-color);
+    margin: 0 0 12px 0;
+  }
+
+  &__text {
+    font-size: 16px;
+    color: var(--text-gray);
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+  }
+
+  &__button {
     width: 100%;
-    max-width: 400px;
-    padding: 40px 24px;
-    text-align: center;
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: #20ad4e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 
-    &__icon {
-        margin-bottom: 24px;
-        display: flex;
-        justify-content: center;
-
-        svg {
-            animation: checkmark 0.5s ease-out 0.2s both;
-        }
+    &:hover {
+      background: #1a8f42;
+      transform: translateY(-2px);
     }
 
-    &__title {
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--text-primary-color);
-        margin: 0 0 12px 0;
+    &:active {
+      transform: translateY(0);
     }
-
-    &__text {
-        font-size: 16px;
-        color: var(--text-gray);
-        margin: 0 0 32px 0;
-        line-height: 1.5;
-    }
-
-    &__button {
-        width: 100%;
-        background: #20AD4E;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 16px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-
-        &:hover {
-            background: #1a8f42;
-            transform: translateY(-2px);
-        }
-
-        &:active {
-            transform: translateY(0);
-        }
-    }
+  }
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 
-    to {
-        opacity: 1;
-    }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes popIn {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
 
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes checkmark {
-    from {
-        transform: scale(0.5);
-        opacity: 0;
-    }
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
 
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }

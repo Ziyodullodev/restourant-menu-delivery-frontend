@@ -1,232 +1,232 @@
 .bank-cards-page {
-    min-height: 100vh;
+  min-height: 100vh;
+  background: var(--bg-primary-color);
+  padding-bottom: 100px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    position: sticky;
+    top: 0;
     background: var(--bg-primary-color);
-    padding-bottom: 100px;
+    z-index: 10;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
 
-    &__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 16px;
-        position: sticky;
-        top: 0;
-        background: var(--bg-primary-color);
-        z-index: 10;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  &__back {
+    background: transparent;
+    border: none;
+    color: var(--text-primary-color);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary-color);
+    margin: 0;
+    flex: 1;
+  }
+
+  &__add-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #20ad4e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    svg {
+      flex-shrink: 0;
     }
 
-    &__back {
-        background: transparent;
-        border: none;
-        color: var(--text-primary-color);
-        cursor: pointer;
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        &:hover {
-            opacity: 0.7;
-        }
+    &:hover {
+      background: #1a8f42;
     }
+  }
 
-    &__title {
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--text-primary-color);
-        margin: 0;
-        flex: 1;
-    }
-
-    &__add-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: #20AD4E;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 10px 16px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s;
-
-        svg {
-            flex-shrink: 0;
-        }
-
-        &:hover {
-            background: #1a8f42;
-        }
-    }
-
-    &__content {
-        padding: 16px;
-    }
+  &__content {
+    padding: 16px;
+  }
 }
 
 .bank-cards-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+
+  &__icon {
+    color: var(--text-gray);
+    margin-bottom: 24px;
+    opacity: 0.5;
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary-color);
+    margin: 0 0 12px 0;
+  }
+
+  &__description {
+    font-size: 14px;
+    color: var(--text-gray);
+    margin: 0 0 32px 0;
+    max-width: 300px;
+  }
+
+  &__add-btn {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 60px 20px;
+    gap: 8px;
+    background: #20ad4e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 24px;
 
-    &__icon {
-        color: var(--text-gray);
-        margin-bottom: 24px;
-        opacity: 0.5;
+    svg {
+      flex-shrink: 0;
     }
 
-    &__title {
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--text-primary-color);
-        margin: 0 0 12px 0;
+    &:hover {
+      background: #1a8f42;
     }
+  }
 
-    &__description {
-        font-size: 14px;
-        color: var(--text-gray);
-        margin: 0 0 32px 0;
-        max-width: 300px;
-    }
-
-    &__add-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: #20AD4E;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 24px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s;
-        margin-bottom: 24px;
-
-        svg {
-            flex-shrink: 0;
-        }
-
-        &:hover {
-            background: #1a8f42;
-        }
-    }
-
-    &__security {
-        font-size: 12px;
-        color: var(--text-gray);
-        margin: 0;
-        max-width: 320px;
-        line-height: 1.5;
-    }
+  &__security {
+    font-size: 12px;
+    color: var(--text-gray);
+    margin: 0;
+    max-width: 320px;
+    line-height: 1.5;
+  }
 }
 
 .bank-cards-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 
-    &__security {
-        font-size: 12px;
-        color: var(--text-gray);
-        margin: 16px 0 0 0;
-        text-align: center;
-        line-height: 1.5;
-    }
+  &__security {
+    font-size: 12px;
+    color: var(--text-gray);
+    margin: 16px 0 0 0;
+    text-align: center;
+    line-height: 1.5;
+  }
 }
 
 .bank-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
-    padding: 24px;
-    color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 24px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
     position: relative;
-    overflow: hidden;
+    z-index: 1;
+  }
 
-    &::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 200px;
-        height: 200px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
+  &__icon {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  &__delete {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
+  }
 
-    &__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 32px;
-        position: relative;
-        z-index: 1;
-    }
+  &__number {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
 
-    &__icon {
-        color: rgba(255, 255, 255, 0.9);
-    }
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
 
-    &__delete {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        border-radius: 8px;
-        padding: 8px;
-        color: white;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
+  &__expiry,
+  &__balance {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-        &:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-    }
+  &__label {
+    font-size: 11px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-    &__number {
-        font-size: 20px;
-        font-weight: 600;
-        letter-spacing: 2px;
-        margin-bottom: 24px;
-        position: relative;
-        z-index: 1;
-    }
+  &__value {
+    font-size: 16px;
+    font-weight: 600;
+  }
 
-    &__footer {
-        display: flex;
-        justify-content: space-between;
-        position: relative;
-        z-index: 1;
-    }
-
-    &__expiry,
-    &__balance {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    &__label {
-        font-size: 11px;
-        opacity: 0.8;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    &__value {
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    &__balance {
-        text-align: right;
-    }
+  &__balance {
+    text-align: right;
+  }
 }

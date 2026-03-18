@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Section } from "../section/section";
 import { throttle } from "lodash";
 import Swiper from "swiper";
-import { mockData } from "../mock/mock";
+import { useMenu } from "@/contexts/menu-context";
 
 interface IProps {
   swiperInstance: Swiper | null;
@@ -15,18 +15,19 @@ export function ScrollActiveWrapper(props: IProps): React.ReactElement {
   const { swiperInstance, userScroll, setUserScroll, setActiveIndex } = props;
   const sectionContainerRef = useRef<null | HTMLDivElement>(null);
   const sectionOffset = 112;
+  const { categories, isLoading, error } = useMenu();
 
   useEffect(() => {
     const handleScroll = throttle(() => {
       const sectionContainer = sectionContainerRef.current;
       if (!sectionContainer || !userScroll) return;
 
-      const sections = sectionContainer.querySelectorAll<HTMLElement>("div.section");
+      const sections =
+        sectionContainer.querySelectorAll<HTMLElement>("div.section");
       let currentSectionIndex = 0;
 
       sections.forEach((section, index) => {
         const rect = section.getBoundingClientRect();
-        // If the section's top is roughly at the top of the viewport (considering offset)
         if (rect.top <= sectionOffset + 10) {
           currentSectionIndex = index;
         }
@@ -42,7 +43,6 @@ export function ScrollActiveWrapper(props: IProps): React.ReactElement {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [swiperInstance, userScroll, setActiveIndex]);
 
-  // Reset userScroll to true after a short delay when navigation clicking finishes
   useEffect(() => {
     if (!userScroll) {
       const timer = setTimeout(() => setUserScroll(true), 1000);
@@ -50,16 +50,37 @@ export function ScrollActiveWrapper(props: IProps): React.ReactElement {
     }
   }, [userScroll, setUserScroll]);
 
+  if (error) {
+    return (
+      <div className="menu-error">
+        <p>⚠️ Menyu yuklanmadi</p>
+        <small>{error}</small>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div ref={sectionContainerRef} id="sections-container">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="section-skeleton">
+            <div className="section-skeleton__title" />
+            <div className="section-skeleton__grid">
+              {Array.from({ length: 4 }).map((_, j) => (
+                <div key={j} className="card-skeleton" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div ref={sectionContainerRef} id="sections-container">
-      {mockData?.map((category) => {
-        return (
-          <Section
-            key={category.id}
-            category={category}
-          />
-        );
-      })}
+      {categories.map((category) => (
+        <Section key={category.id} category={category} />
+      ))}
     </div>
   );
 }

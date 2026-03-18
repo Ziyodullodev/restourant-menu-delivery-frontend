@@ -1,6 +1,14 @@
 interface TelegramWebApp {
   initData: string;
-  initDataUnsafe: any;
+  initDataUnsafe: {
+    user?: {
+      id: number;
+      first_name: string;
+      last_name?: string;
+      username?: string;
+      language_code?: string;
+    };
+  };
   version: string;
   platform: string;
   colorScheme: "light" | "dark";
@@ -42,10 +50,12 @@ interface TelegramWebApp {
     disable: () => void;
     showProgress: (leaveActive: boolean) => void;
     hideProgress: () => void;
-    setParams: (params: any) => void;
+    setParams: (params: Record<string, unknown>) => void;
   };
   HapticFeedback: {
-    impactOccurred: (style: "light" | "medium" | "heavy" | "rigid" | "soft") => void;
+    impactOccurred: (
+      style: "light" | "medium" | "heavy" | "rigid" | "soft",
+    ) => void;
     notificationOccurred: (type: "error" | "success" | "warning") => void;
     selectionChanged: () => void;
   };
@@ -54,8 +64,14 @@ interface TelegramWebApp {
   close: () => void;
   enableClosingConfirmation: () => void;
   disableClosingConfirmation: () => void;
-  onEvent: (eventType: string, eventHandler: (...args: any[]) => void) => void;
-  offEvent: (eventType: string, eventHandler: (...args: any[]) => void) => void;
+  onEvent: (
+    eventType: string,
+    eventHandler: (...args: unknown[]) => void,
+  ) => void;
+  offEvent: (
+    eventType: string,
+    eventHandler: (...args: unknown[]) => void,
+  ) => void;
   sendData: (data: string) => void;
   setHeaderColor: (color: string) => void;
   setBackgroundColor: (color: string) => void;
