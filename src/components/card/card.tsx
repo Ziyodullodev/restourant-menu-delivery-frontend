@@ -35,7 +35,7 @@ export function Card(props: IProps): React.ReactElement {
   const totalQuantity = Math.max(serverQty, localQty);
   const isCounterShow = totalQuantity > 0;
 
-  const handleAddClick = () => setIsModalOpen(true);
+  const handleOpenModal = () => setIsModalOpen(true);
 
   const handleAddToCart = (prod: IApiProduct, addons: IApiAddon[]) => {
     const addonPrice = addons.reduce((sum, a) => a.price + sum, 0);
@@ -50,9 +50,23 @@ export function Card(props: IProps): React.ReactElement {
     setIsModalOpen(false);
   };
 
-  const increment = () => setIsModalOpen(true);
+  const handleAddClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleAddToCart(product, []);
+  };
 
-  const decrement = () => {
+  const increment = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (cartItems.length > 0) {
+      const lastItem = cartItems[cartItems.length - 1];
+      updateQuantity(lastItem.id, lastItem.quantity + 1);
+    } else {
+      handleAddToCart(product, []);
+    }
+  };
+
+  const decrement = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (cartItems.length > 0) {
       const lastItem = cartItems[cartItems.length - 1];
       updateQuantity(lastItem.id, lastItem.quantity - 1);
@@ -63,7 +77,7 @@ export function Card(props: IProps): React.ReactElement {
     <>
       <div className="card">
         <div className="card__wrap">
-          <div className="card__image-wrap" onClick={handleAddClick}>
+          <div className="card__image-wrap" onClick={handleOpenModal}>
             {product.medium_image || product.original_image ? (
               <img
                 src={product.medium_image || product.original_image}
@@ -76,10 +90,10 @@ export function Card(props: IProps): React.ReactElement {
           </div>
 
           <div className="card__description">
-            <p className="card__name" onClick={handleAddClick}>
+            <p className="card__name" onClick={handleOpenModal}>
               {productName}
             </p>
-            <p className="card__info" onClick={handleAddClick}>
+            <p className="card__info" onClick={handleOpenModal}>
               {productDescription}
             </p>
             <div className="card__meta">

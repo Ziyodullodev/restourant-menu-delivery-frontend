@@ -51,3 +51,11 @@ export interface IApiProduct {
 // ─── Cart Summary ────────────────────────────────────────────────────────────
 
 export type ICartSummary = Record<string, number>;
+
+export interface IApiCartItem {
+  id: string; // Backend cart_id (UUID)
+  product: IApiProduct;
+  branch?: string;
+  amount: number;
+  ingredients?: IApiAddon[];
+}

@@ -3,6 +3,7 @@ import {
   IApiProduct,
   ICartSummary,
   IApiResponse,
+  IApiCartItem,
 } from "@/types/api.types";
 
 export type { ICartSummary };
@@ -68,4 +69,68 @@ export const fetchCartSummary = async (): Promise<ICartSummary> => {
   });
   if (!res.ok) throw new Error(`Cart summary fetch failed: ${res.status}`);
   return res.json();
+};
+
+// ─── 4. Savatcha boshqaruvi ───────────────────────────────────────────────────
+
+/** Savatga maxsulot qo'shish */
+export const createCartItem = async (data: {
+  product: string;
+  branch?: string;
+  amount?: number;
+  ingredients?: string[];
+}): Promise<IApiCartItem> => {
+  const res = await fetch(`${BASE_URL}/r-client/order/cart/create/`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({
+      ...data,
+      amount: data.amount ?? 1,
+    }),
+  });
+
+  if (!res.ok) {
+    if (res.status === 400) {
+      // Backend allaqachon mavjud bo'lsa 400 qaytaradi, lekin miqdorni o'zi oshiradi
+      // Frontendga buni xato deb ko'rsatmasligimiz mumkin
+      const errData = await res.json();
+      console.log("Cart item exists or 400 error:", errData);
+      // Agar javobda 'detail' yoki shunga o'xshash xabar bo'lsa, buni catch qilish kerak
+    }
+    throw new Error(`Cart create failed: ${res.status}`);
+  }
+  return res.json();
+};
+
+/** Savatdagi element miqdorini o'zgartirish */
+export const updateCartItem = async (
+  cartId: string,
+  amount: number,
+): Promise<IApiCartItem> => {
+  const res = await fetch(`${BASE_URL}/r-client/order/cart/${cartId}/`, {
+    method: "PATCH",
+    headers: authHeaders(),
+    body: JSON.stringify({ amount }),
+  });
+  if (!res.ok) throw new Error(`Cart update failed: ${res.status}`);
+  return res.json();
+};
+
+/** Savatdan o'chirish */
+export const deleteCartItem = async (cartId: string): Promise<void> => {
+  const res = await fetch(`${BASE_URL}/r-client/order/cart/${cartId}/`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error(`Cart delete failed: ${res.status}`);
+};
+
+/** Savatdagi barcha elementlarni olish */
+export const fetchCartItems = async (): Promise<IApiCartItem[]> => {
+  const res = await fetch(`${BASE_URL}/r-client/order/cart/`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error(`Cart list fetch failed: ${res.status}`);
+  const data: IApiResponse<IApiCartItem> = await res.json();
+  return data.results;
 };
