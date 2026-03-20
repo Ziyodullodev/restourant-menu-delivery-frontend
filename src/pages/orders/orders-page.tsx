@@ -6,22 +6,28 @@ import { IApiOrder, IApiOrderItem } from "@/types/api.types";
 import { numberDigits } from "@/helpers/number-digits";
 import "./orders-page.scss";
 
+import { useAuth } from "@/contexts/auth-context";
+
 type TabStatus = "all" | "active" | "delivering" | "completed";
 
 export function OrdersPage(): React.ReactElement {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { tableNumber } = useTable();
+  const { authData } = useAuth();
   const [activeTab, setActiveTab] = useState<TabStatus>("all");
   const [orders, setOrders] = useState<IApiOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(false);
-    fetchOrderHistory()
+    const branch = authData?.session?.organization?.id;
+    if (!branch && authData === null) return; // Wait for auth if needed, but if authData is loaded and no branch, we can proceed or fail
+
+    setIsLoading(true);
+    fetchOrderHistory({ branch })
       .then((data) => setOrders(data.results))
       .catch((err) => console.error("Orders fetch error:", err))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [authData]);
 
   const getFilteredOrders = () => {
     if (activeTab === "all") return orders;
@@ -123,31 +129,60 @@ export function OrdersPage(): React.ReactElement {
           </div>
         ) : (
           <div className="orders-page__list">
-            {filteredOrders.map((order: IApiOrder) => (
+            {filteredOrders.map((order: IApiOrder) => {
+              const displayId = String(order.id).length > 8 ? String(order.id).slice(0, 8).toUpperCase() : order.id;
+              
+              return (
               <div key={order.id} className="order-card">
                 <div className="order-card__header">
-                  <span className="order-card__number">#{order.id}</span>
+                  <div className="order-card__header-left">
+                    <span className="order-card__label">{t.ordersTitle?.split(" ")[0] || "Buyurtma"}</span>
+                    <span className="order-card__number">#{displayId}</span>
+                  </div>
                   <span className={`order-card__status order-card__status--${order.status}`}>
                     {order.status_display || order.status}
                   </span>
                 </div>
+
                 <div className="order-card__content">
                   <div className="order-card__items">
-                    {order.items.map((item: IApiOrderItem) => (
-                      <div key={item.id} className="order-card__item">
-                        {item.product.name_uz} x {item.amount}
-                      </div>
-                    ))}
+                    {order.items.map((item: IApiOrderItem) => {
+                      const pName = language === "uz" ? item.product.name_uz : (item.product.name_ru || item.product.name_uz);
+                      return (
+                        <div key={item.id} className="order-card__item">
+                          <div className="order-card__item-left">
+                            {item.product.small_image ? (
+                              <img src={item.product.small_image} alt={pName} className="order-card__item-img" />
+                            ) : (
+                              <div className="order-card__item-placeholder">🍽️</div>
+                            )}
+                            <div className="order-card__item-info">
+                              <span className="order-card__item-name">{pName}</span>
+                              <span className="order-card__item-price">{numberDigits(item.product.current_price)} {t.sum}</span>
+                            </div>
+                          </div>
+                          <div className="order-card__item-qty">
+                            x{item.amount}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="order-card__footer">
+                  <div className="order-card__date">
+                    {new Date(order.created_at).toLocaleString(language === "uz" ? "uz-UZ" : "ru-RU", {
+                        day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
+                    })}
                   </div>
                   <div className="order-card__total">
-                    {numberDigits(order.current_price)} {t.sum}
+                    <span className="order-card__total-label">{t.total}</span>
+                    <span className="order-card__total-price">{numberDigits(order.current_price)} {t.sum}</span>
                   </div>
                 </div>
-                <div className="order-card__date">
-                  {new Date(order.created_at).toLocaleString()}
-                </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
       </div>

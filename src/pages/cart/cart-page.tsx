@@ -47,6 +47,11 @@ export function CartPage(): React.ReactElement {
           <h2 className="cart-page__empty-title">{t.emptyCart}</h2>
           <p className="cart-page__empty-message">{t.emptyCartMessage}</p>
         </div>
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={handleSuccessConfirm}
+          language={language}
+        />
       </div>
     );
   }

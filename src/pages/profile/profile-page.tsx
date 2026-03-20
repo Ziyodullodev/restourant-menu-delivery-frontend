@@ -19,11 +19,7 @@ export function ProfilePage(): React.ReactElement {
       label: language === "ru" ? "Наши филиалы" : "Bizning filiallar",
       onClick: () => console.log("Locations"),
     },
-    {
-      icon: "💳",
-      label: t.bankCards,
-      onClick: () => navigate("/bank-cards"),
-    },
+
     {
       icon: "💬",
       label: language === "ru" ? "Обратная связь" : "Fikr-mulohaza",
@@ -32,7 +28,7 @@ export function ProfilePage(): React.ReactElement {
     {
       icon: "ℹ️",
       label: t.aboutUs,
-      onClick: () => console.log("About Us"),
+      onClick: () => navigate("/about"),
     },
     {
       icon: "🔒",

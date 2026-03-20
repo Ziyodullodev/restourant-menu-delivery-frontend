@@ -9,6 +9,7 @@ import { CartPage } from "./pages/cart/cart-page";
 import { OrdersPage } from "./pages/orders/orders-page";
 import { ProfilePage } from "./pages/profile/profile-page";
 import { BankCardsPage } from "./pages/bank-cards/bank-cards-page";
+import { AboutPage } from "./pages/about/about-page";
 import { AuthProvider } from "./contexts/auth-context";
 import { MenuProvider } from "./contexts/menu-context";
 
@@ -38,6 +39,7 @@ export function App(): React.ReactElement {
                     <Route path="/orders" element={<OrdersPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/bank-cards" element={<BankCardsPage />} />
+                    <Route path="/about" element={<AboutPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                   <BottomNav />

@@ -78,6 +78,8 @@ export interface IApiOrderItem {
   product: {
     id: string | number;
     name_uz: string;
+    name_ru?: string;
+    name_en?: string;
     current_price: number;
     small_image: string;
   };
@@ -87,7 +89,7 @@ export interface IApiOrderItem {
 }
 
 export interface IApiOrder {
-  id: number;
+  id: string | number;
   organization_branches: number | string;
   status: OrderStatus;
   status_display: string;

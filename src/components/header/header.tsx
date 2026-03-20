@@ -21,7 +21,7 @@ export function Header(props: IProps): React.ReactElement {
     <header className="header">
       <div className="header__top">
         <div className="header__table">
-          <span className="header__table-number">{t.table} {tableNumber || "1"}</span>
+          <span className="header__table-number">{t.table} #{tableNumber || "1"}</span>
         </div>
         <div className="header__langs">
           {(["ru", "uz"] as Language[]).map((l) => (
