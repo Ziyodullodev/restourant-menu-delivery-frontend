@@ -93,35 +93,47 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // To'liq cart elementlarini yuklash va lokalga map qilish
     fetchCartItems()
       .then((apiItems) => {
-        const localItems: CartItem[] = apiItems.map((apiItem) => {
-          const addonIds =
-            apiItem.ingredients
-              ?.map((a) => a.id)
-              .sort()
-              .join("-") ?? "";
-          const uniqueId = addonIds
-            ? `${apiItem.product.id}-${addonIds}`
-            : apiItem.product.id;
+        if (!Array.isArray(apiItems)) return;
+        
+        setItems((prevItems) => {
+          const merged = [...prevItems];
 
-          return {
-            id: uniqueId,
-            backendId: apiItem.id,
-            productId: apiItem.product.id,
-            name:
-              language === "uz"
-                ? apiItem.product.name_uz
-                : apiItem.product.name_ru,
-            price: apiItem.product.current_price, // Addonlar narxini ham backend berishi kerak, hozircha faqat product narxi
-            quantity: apiItem.amount,
-            image:
-              apiItem.product.medium_image || apiItem.product.original_image,
-            weight: apiItem.product.product_weight
-              ? `${apiItem.product.product_weight} g`
-              : "",
-            addons: apiItem.ingredients,
-          };
+          apiItems.forEach((apiItem) => {
+            const prodId = typeof apiItem.product === 'string' ? apiItem.product : apiItem.product?.id;
+            if (!prodId) return;
+
+            const addonIds = Array.isArray(apiItem.ingredients)
+              ? apiItem.ingredients.map((a: string | { id: string }) => typeof a === 'string' ? a : a.id).sort().join("-")
+              : "";
+            const uniqueId = addonIds ? `${prodId}-${addonIds}` : prodId;
+
+            const existingIdx = merged.findIndex((i) => i.id === uniqueId);
+            if (existingIdx >= 0) {
+              merged[existingIdx] = {
+                ...merged[existingIdx],
+                backendId: apiItem.id,
+                quantity: apiItem.amount,
+              };
+            } else {
+              if (typeof apiItem.product === 'object' && apiItem.product !== null) {
+                 merged.push({
+                    id: uniqueId,
+                    backendId: apiItem.id,
+                    productId: prodId,
+                    name: language === "uz" ? apiItem.product.name_uz : apiItem.product.name_ru || "Maxsulot",
+                    price: apiItem.product.current_price || 0,
+                    quantity: apiItem.amount,
+                    image: apiItem.product.medium_image || apiItem.product.original_image || "",
+                    addons: apiItem.ingredients as IApiAddon[],
+                 });
+              }
+            }
+          });
+
+          // Optional: we don't drop items not present in backend immediately here to prevent flickering, 
+          // but relying on backend ID makes it reliable.
+          return merged;
         });
-        setItems(localItems);
       })
       .catch((err) => console.warn("Cart items fetch error:", err));
   }, [authData, summaryClock, language]);
@@ -159,12 +171,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
           amount: 1,
           ingredients: item.addons?.map((a) => a.id),
         });
-        // Backenddan kelgan haqiqiy ID ni saqlaymiz
-        setItems((prev) =>
-          prev.map((i) =>
-            i.id === uniqueId ? { ...i, backendId: res.id } : i,
-          ),
-        );
+        // Backenddan kelgan haqiqiy ID ni saqlaymiz, faqatgina res.id bo'lsa
+        if (res.id) {
+          setItems((prev) =>
+            prev.map((i) =>
+              i.id === uniqueId ? { ...i, backendId: res.id } : i,
+            ),
+          );
+        }
         // Summary ni yangilaymiz (badge ko'rinishi uchun)
         refreshCartSummary();
       } catch (error: unknown) {

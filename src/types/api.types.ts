@@ -54,10 +54,10 @@ export type ICartSummary = Record<string, number>;
 
 export interface IApiCartItem {
   id: string; // Backend cart_id (UUID)
-  product: IApiProduct;
+  product: IApiProduct | string;
   branch?: string;
   amount: number;
-  ingredients?: IApiAddon[];
+  ingredients?: IApiAddon[] | string[];
 }
 
 // ─── Order Types ─────────────────────────────────────────────────────────────

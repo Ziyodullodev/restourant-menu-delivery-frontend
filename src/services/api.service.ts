@@ -127,12 +127,12 @@ export const deleteCartItem = async (cartId: string): Promise<void> => {
 
 /** Savatdagi barcha elementlarni olish */
 export const fetchCartItems = async (): Promise<IApiCartItem[]> => {
-  const res = await fetch(`${BASE_URL}/r-client/order/cart/`, {
+  const res = await fetch(`${BASE_URL}/r-client/order/cart/list/`, {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error(`Cart list fetch failed: ${res.status}`);
-  const data: IApiResponse<IApiCartItem> = await res.json();
-  return data.results;
+  const data = await res.json();
+  return data.results || data;
 };
 /** Savatdagi barcha elementlarni bir yo'la o'chirish (Bulk delete) */
 export const deleteAllCartItems = async (): Promise<void> => {
@@ -159,7 +159,7 @@ export const createOrder = async (data: {
   restourant_session?: string | null;
   original_price: number;
   current_price: number;
-}): Promise<any> => {
+}): Promise<IApiOrder> => {
   const res = await fetch(`${BASE_URL}/r-client/order/order/create/`, {
     method: "POST",
     headers: authHeaders(),

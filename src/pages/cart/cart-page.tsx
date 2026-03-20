@@ -23,7 +23,7 @@ export function CartPage(): React.ReactElement {
     try {
       await placeOrder(); // Default holatda context'dagi mantiq ishlaydi
       setIsSuccessModalOpen(true);
-    } catch (error) {
+    } catch {
       alert(language === "uz" ? "Xatolik yuz berdi" : "Произошла ошибка");
     } finally {
       setIsLoading(false);
