@@ -169,6 +169,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const res = await createCartItem({
           product: item.productId,
           amount: 1,
+          branch: authData.session?.organization?.id,
           ingredients: item.addons?.map((a) => a.id),
         });
         // Backenddan kelgan haqiqiy ID ni saqlaymiz, faqatgina res.id bo'lsa
@@ -245,7 +246,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (authData) {
       try {
         // Birinchi navbatda barcha elementlarni bir yo'la o'chirishga harakat qilamiz
-        await deleteAllCartItems();
+        await deleteAllCartItems(authData.session?.organization?.id);
         refreshCartSummary();
       } catch (err) {
         console.warn("Bulk delete failed, falling back to individual deletes", err);

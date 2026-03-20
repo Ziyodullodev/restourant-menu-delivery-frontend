@@ -14,7 +14,7 @@ interface IProps {
 
 export function Card(props: IProps): React.ReactElement {
   const { product } = props;
-  const { addItem, updateQuantity, items, cartSummary } = useCart();
+  const { addItem, updateQuantity, items } = useCart();
   const { t, language } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -24,15 +24,9 @@ export function Card(props: IProps): React.ReactElement {
       ? (product.description_uz ?? "")
       : (product.description_ru ?? "");
 
-  // cart-summary dan mahsulot miqdorini olamiz (server haqiqati)
-  const serverQty = cartSummary[product.id] ?? 0;
-
-  // Local cart dan ham tekshiramiz (optimistic UI)
+  // Local cart dan tekshiramiz (sinxronlangan holat, backend caching bugni aylanib o'tish uchun)
   const cartItems = items.filter((item) => item.productId === product.id);
-  const localQty = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
-  // Server yoki lokal — qaysi katta bo'lsa shuni ko'rsatamiz
-  const totalQuantity = Math.max(serverQty, localQty);
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const isCounterShow = totalQuantity > 0;
 
   const handleOpenModal = () => setIsModalOpen(true);

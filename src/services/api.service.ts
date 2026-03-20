@@ -135,13 +135,14 @@ export const fetchCartItems = async (): Promise<IApiCartItem[]> => {
   return data.results || data;
 };
 /** Savatdagi barcha elementlarni bir yo'la o'chirish (Bulk delete) */
-export const deleteAllCartItems = async (): Promise<void> => {
+export const deleteAllCartItems = async (branch?: string): Promise<void> => {
   const res = await fetch(`${BASE_URL}/r-client/order/cart/delete_all/`, {
     method: "DELETE",
     headers: authHeaders(),
+    body: JSON.stringify({ branch_id: branch }),
   });
-  // Agar delete_all yo'q bo'lsa, 404 berishi mumkin, bu holda local o'chirish davom etadi
-  if (!res.ok && res.status !== 404) {
+  // Agar delete_all yo'q bo'lsa (404), throw error qilsinki front-end dagi fallback (birma-bir o'chirish) ishlasin
+  if (!res.ok) {
     throw new Error(`Cart bulk delete failed: ${res.status}`);
   }
 };
