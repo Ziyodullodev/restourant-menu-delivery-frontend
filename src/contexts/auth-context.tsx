@@ -5,6 +5,7 @@ import {
   useState,
   ReactNode,
 } from "react";
+import { deleteAllCartItems } from "@/services/api.service";
 
 interface User {
   id: number;
@@ -20,6 +21,7 @@ interface Organization {
   name_en: string;
   header_colour: string;
   button_clour: string;
+  button_colour?: string; // Add optional proper spelling
   price_colour: string;
   logo: string | null;
   logo_svg: string | null;
@@ -35,34 +37,26 @@ interface Organization {
   admin: number;
   organization: string;
   working_start_time?: string;
-  working_end_time?: string;
-  telegram_channel?: string;
-  instagram?: string;
-  whatsapp?: string;
-  telegram_chat_id?: string;
   telegram_account?: string;
+  table_number?: string | number;
 }
 
-interface Session {
-  session_id: string;
-  table_id: string;
-  table_number: number;
-  opened_at: string;
-  expired_at: string;
-  organization: Organization;
-}
 
 interface AuthData {
   access: string;
   refresh: string;
-  session: Session;
+  session_id: string;
+  organization: Organization;
   user: User;
+  session?: any; // Add session property explicitly to AuthData
+  table_id?: string;
 }
 
 interface AuthContextType {
   authData: AuthData | null;
   isLoading: boolean;
   error: string | null;
+  login: (tableId?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,78 +64,153 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const BASE_URL = "https://backend-v1.menio.uz/api";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [authData, setAuthData] = useState<AuthData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [authData, setAuthData] = useState<AuthData | null>(() => {
+    const cached = localStorage.getItem("auth_data");
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        // Apply colors immediately if cached
+        if (parsed.organization) {
+          const org = parsed.organization;
+          document.documentElement.style.setProperty("--accent-color", org.header_colour || "#F54927");
+          document.documentElement.style.setProperty("--price-color", org.price_colour || "#F54927");
+          document.documentElement.style.setProperty("--button-color", org.button_colour || org.button_clour || "#F54927");
+        }
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
+  const [isLoading, setIsLoading] = useState(!authData);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const login = async () => {
-      try {
-        const tg = window.Telegram?.WebApp;
-        const telegramId = tg?.initDataUnsafe?.user?.id || 848796050; // Use sandbox ID if not in TG
+  const login = async (tableId?: string) => {
+    setIsLoading(true);
+    try {
+      const tg = window.Telegram?.WebApp;
+      const user = tg?.initDataUnsafe?.user;
+      const telegramId = user?.id || 848796050;
 
-        if (!telegramId) {
-          setError("Telegram user ID not found");
-          setIsLoading(false);
-          return;
-        }
-
-        const response = await fetch(
-          `${BASE_URL}/r-client/auth/get-token/web/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              telegram_chat_id: telegramId,
-            }),
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to authenticate");
-        }
-
-        const data: AuthData = await response.json();
-        setAuthData(data);
-
-        // Tokenni localStorage ga saqlaymiz — api.service ishlashi uchun
-        localStorage.setItem("auth_data", JSON.stringify(data));
-
-        // Organisatsiya ranglarini CSS o'zgaruvchilariga qo'yamiz
-        if (data.session?.organization) {
-          const org = data.session.organization;
-          document.documentElement.style.setProperty(
-            "--accent-color",
-            org.header_colour || "#F54927",
-          );
-          document.documentElement.style.setProperty(
-            "--price-color",
-            org.price_colour || "#F54927",
-          );
-          document.documentElement.style.setProperty(
-            "--button-color",
-            org.button_clour || "#F54927",
-          );
-        }
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError(String(err));
-        }
-        console.error("Auth error:", err);
-      } finally {
-        setIsLoading(false);
+      if (!telegramId) {
+        throw new Error("Telegram user ID not found");
       }
-    };
 
-    login();
+      const body: any = {
+        telegram_chat_id: telegramId,
+        first_name: user?.first_name || "",
+        last_name: user?.last_name || "",
+        username: user?.username || String(telegramId),
+        language: user?.language_code || "uz"
+      };
+
+      if (tableId) {
+        body.table_number_id = tableId;
+      }
+
+      const endpoint = tableId 
+        ? `${BASE_URL}/r-client/auth/get-token/` 
+        : `${BASE_URL}/r-client/auth/get-token/web/`;
+
+      const response = await fetch(
+        endpoint,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        },
+      );
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.detail || errData.message || "Failed to authenticate");
+      }
+
+      const data: AuthData = await response.json();
+      
+      const isDifferentOrg = 
+         authData?.organization?.id && 
+         data.organization?.id && 
+         String(authData.organization.id) !== String(data.organization.id);
+
+      let finalData: AuthData;
+
+      if (isDifferentOrg) {
+         // Agar tashkilot o'zgargan bo'lsa, eskisini qoldirmasdan to'liq almashtiramiz
+         finalData = {
+            ...data,
+            table_id: tableId || data.table_id
+         } as AuthData;
+         
+         // Mahalliy savatchani tozalaymiz
+         localStorage.removeItem("delivery_cart");
+         
+         // Custom event yuboramiz, toki cart-context eshitib tozalab yuborsin
+         window.dispatchEvent(new Event("organization_changed"));
+      } else {
+         // Refreshed same org - merge defensively
+         finalData = {
+           ...(authData || {}), 
+           ...data,
+           organization: data.organization || authData?.organization,
+           table_id: tableId || authData?.table_id
+         } as AuthData;
+
+         if (data.organization && authData?.organization) {
+             finalData.organization = {
+                 ...authData.organization,
+                 ...data.organization
+             };
+         }
+         
+         // Agar `/web` orqali kelsa va `session: null` qaytsa, 
+         // lokal tashkilotni saqlab qolamiz ammo stol raqamini o'chirib tashlaymiz
+         if (!tableId && data.session === null) {
+             finalData.table_id = undefined;
+             if (finalData.organization) {
+                 finalData.organization.table_number = undefined;
+             }
+         }
+      }
+
+      setAuthData(finalData);
+      localStorage.setItem("auth_data", JSON.stringify(finalData));
+      
+      if (isDifferentOrg) {
+         try {
+            await deleteAllCartItems(); // Tozalash backenddan ham
+         } catch (e) {
+            console.error("Failed to delete cart on org change", e);
+         }
+      }
+
+      if (finalData.organization) {
+        const org = finalData.organization;
+        document.documentElement.style.setProperty("--accent-color", org.header_colour || "#F54927");
+        document.documentElement.style.setProperty("--price-color", org.price_colour || "#F54927");
+        document.documentElement.style.setProperty("--button-color", org.button_colour || org.button_clour || "#F54927");
+      }
+    } catch (err: any) {
+      setError(err.message || String(err));
+      console.error("Auth error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Small delay to ensure initial render from cache is stable
+    const timer = setTimeout(() => {
+        login(); // Do not pass authData?.table_id to avoid calling get-token/ on refresh
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authData, isLoading, error }}>
+    <AuthContext.Provider value={{ authData, isLoading, error, login }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,8 +5,10 @@ import { MinusIcon } from "@/components/icons/minus-icon";
 import { PluseIcon } from "@/components/icons/pluse-icon";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useTable } from "@/contexts/table-context";
+import { useOrderType } from "@/contexts/order-type-context";
 import { SuccessModal } from "@/components/success-modal/success-modal";
+import { DeliveryModal } from "@/components/delivery-modal/delivery-modal";
+import { CheckoutModal } from "@/components/checkout-modal/checkout-modal";
 import "./cart-page.scss";
 
 export function CartPage(): React.ReactElement {
@@ -14,19 +16,43 @@ export function CartPage(): React.ReactElement {
   const { items, updateQuantity, removeItem, clearCart, totalPrice, placeOrder } =
     useCart();
   const { t, language } = useI18n();
-  const { tableNumber } = useTable();
+  const { orderType } = useOrderType();
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = () => {
+    if (orderType === "delivery") {
+        setIsDeliveryModalOpen(true);
+    } else {
+        setIsCheckoutModalOpen(true);
+    }
+  };
+
+  const handleDeliveryConfirm = (data: { phone: string; address: string; location?: any }) => {
+    setIsDeliveryModalOpen(false);
+    performOrder({ address: data.address, phone: data.phone });
+  };
+
+  const handleCheckoutConfirm = (data: { phone?: string; comment: string }) => {
+    setIsCheckoutModalOpen(false);
+    performOrder({ comment: data.comment, phone: data.phone });
+  };
+
+  const performOrder = async (data: { comment?: string; phone?: string; address?: string }) => {
     setIsLoading(true);
     try {
-      await placeOrder(); // Default holatda context'dagi mantiq ishlaydi
+      await placeOrder({
+        comment: data.comment,
+        phone: data.phone,
+        address: data.address,
+      });
       setIsSuccessModalOpen(true);
     } catch {
-      alert(language === "uz" ? "Xatolik yuz berdi" : "Произошла ошибка");
+       alert(language === "uz" ? "Xatolik yuz berdi" : "Произошла ошибка");
     } finally {
-      setIsLoading(false);
+       setIsLoading(false);
     }
   };
 
@@ -63,12 +89,6 @@ export function CartPage(): React.ReactElement {
           <h1 className="cart-page__title">
             {t.cartTitle} ({items.length})
           </h1>
-          {tableNumber && (
-            <div className="cart-page__table">
-              <span className="cart-page__table-label">{t.table}</span>
-              <span className="cart-page__table-number">#{tableNumber}</span>
-            </div>
-          )}
         </div>
         <button className="cart-page__clear" onClick={clearCart}>
           {t.clearCart}
@@ -134,6 +154,7 @@ export function CartPage(): React.ReactElement {
         ))}
       </div>
 
+
       <div className="cart-page__footer">
         <div className="cart-page__total">
           <span className="cart-page__total-label">{t.total}</span>
@@ -155,6 +176,21 @@ export function CartPage(): React.ReactElement {
         onClose={handleSuccessConfirm}
         language={language}
       />
+
+      <DeliveryModal
+        isOpen={isDeliveryModalOpen}
+        onClose={() => setIsDeliveryModalOpen(false)}
+        onConfirm={handleDeliveryConfirm}
+      />
+
+      {orderType !== "delivery" && (
+        <CheckoutModal
+          isOpen={isCheckoutModalOpen}
+          type={orderType as "pickup" | "in_restaurant"}
+          onClose={() => setIsCheckoutModalOpen(false)}
+          onConfirm={handleCheckoutConfirm}
+        />
+      )}
     </div>
   );
 }

@@ -19,7 +19,7 @@ import {
 } from "@/services/api.service";
 import { useAuth } from "./auth-context";
 import { useI18n } from "./i18n-context";
-import { useTable } from "./table-context";
+import { useOrderType } from "./order-type-context";
 
 export interface CartItem {
   id: string; // Unikal local ID: "productId-addon1-addon2"
@@ -49,6 +49,8 @@ interface CartContextType {
     delivery_with?: "organization_delivery" | "other_delivery" | "take_away" | "in_restaurant";
     pay_with?: string;
     comment?: string;
+    phone?: string;
+    address?: string;
   }) => Promise<void>;
 }
 
@@ -76,6 +78,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
+
+  // Tashkilot o'zgarganda savatchani darhol tozalaymiz
+  useEffect(() => {
+    const handleOrgChange = () => {
+      setItems([]);
+      setCartSummary({});
+    };
+    window.addEventListener("organization_changed", handleOrgChange);
+    return () => window.removeEventListener("organization_changed", handleOrgChange);
+  }, []);
 
   // Auth tayyor bo'lgach cart-summary va to'liq cartni yuklaymiz
   const refreshCartSummary = useCallback(() => {
@@ -169,7 +181,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const res = await createCartItem({
           product: item.productId,
           amount: 1,
-          branch: authData.session?.organization?.id,
+          branch: authData.organization?.id,
           ingredients: item.addons?.map((a) => a.id),
         });
         // Backenddan kelgan haqiqiy ID ni saqlaymiz, faqatgina res.id bo'lsa
@@ -246,7 +258,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (authData) {
       try {
         // Birinchi navbatda barcha elementlarni bir yo'la o'chirishga harakat qilamiz
-        await deleteAllCartItems(authData.session?.organization?.id);
+        await deleteAllCartItems(authData.organization?.id);
         refreshCartSummary();
       } catch (err) {
         console.warn("Bulk delete failed, falling back to individual deletes", err);
@@ -267,23 +279,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const { tableNumber } = useTable();
+  const { orderType } = useOrderType();
 
   const placeOrder = async (orderData?: {
     delivery_with?: "organization_delivery" | "other_delivery" | "take_away" | "in_restaurant";
     pay_with?: string;
     comment?: string;
+    phone?: string;
+    address?: string;
   }) => {
     if (!authData) return;
     try {
       await createOrder({
-        branch: authData.session?.organization?.id,
-        delivery_with: orderData?.delivery_with ?? (tableNumber ? "in_restaurant" : "take_away"),
+        branch: authData.organization?.id,
+        delivery_with: orderData?.delivery_with ?? (
+          orderType === "delivery" ? "organization_delivery" : 
+          orderType === "pickup" ? "take_away" : "in_restaurant"
+        ),
         pay_with: orderData?.pay_with ?? "cash",
-        restourant_session: authData.session?.session_id,
-        user_adress: null, // Address ID agar delivery bo'lsa
-        original_price: totalPrice, // Discount bo'lmasa ikkalasi bir xil
+        restourant_session: authData.session_id,
+        user_adress: orderData?.address || null, // Updated to pass actual address
+        original_price: totalPrice,
         current_price: totalPrice,
+        order_phone_number: orderData?.phone,
+        comment: orderData?.comment,
       });
       clearCart();
     } catch (error) {

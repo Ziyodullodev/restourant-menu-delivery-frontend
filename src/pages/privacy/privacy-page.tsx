@@ -21,7 +21,7 @@ export function PrivacyPage(): React.ReactElement {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const branchId = authData?.session?.organization?.id;
+    const branchId = authData?.organization?.id;
     if (!branchId) return;
 
     const token = (() => {

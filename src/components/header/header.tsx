@@ -1,7 +1,7 @@
 import Swiper from "swiper";
 import { Navbar } from "../navbar/navbar";
 import { useI18n, Language } from "@/contexts/i18n-context";
-import { useTable } from "@/contexts/table-context";
+import { OrderTypeSelector } from "../order-type-selector/order-type-selector";
 import "./header.scss";
 
 interface IProps {
@@ -10,19 +10,16 @@ interface IProps {
   setActiveIndex: (value: number) => void;
   activeIndex: number;
 }
-
 export function Header(props: IProps): React.ReactElement {
   const { activeIndex, setActiveIndex, setSwiperInstance, setUserScroll } =
     props;
-  const { language, setLanguage, t } = useI18n();
-  const { tableNumber } = useTable();
+  const { language, setLanguage } = useI18n();
 
   return (
     <header className="header">
       <div className="header__top">
-        <div className="header__table">
-          <span className="header__table-number">{t.table} #{tableNumber || "1"}</span>
-        </div>
+        <OrderTypeSelector />
+
         <div className="header__langs">
           {(["ru", "uz"] as Language[]).map((l) => (
             <button
@@ -36,8 +33,6 @@ export function Header(props: IProps): React.ReactElement {
           ))}
         </div>
       </div>
-
-      {/* Removed delivery toggles as requested */}
 
       <Navbar
         {...{ activeIndex, setActiveIndex, setSwiperInstance, setUserScroll }}

@@ -14,70 +14,141 @@
     align-items: center;
   }
 
-  &__table {
-    display: flex;
-    align-items: center;
-    background-color: var(--bg-secondary-color);
-    padding: 8px 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+  &__selector {
+    position: relative;
+    z-index: 1001;
 
-    &-number {
-      font-size: 16px;
+    &-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: var(--bg-secondary-color);
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-primary-color);
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+      &[data-active="true"] {
+        border-color: var(--accent-color);
+        background-color: var(--bg-primary-color);
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        color: var(--accent-color);
+      }
+    }
+
+    &-label {
+      max-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-chevron {
+      width: 16px !important;
+      height: 16px !important;
+      color: var(--text-gray, #94a3b8) !important;
+      opacity: 0.7;
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    min-width: 220px;
+    background-color: var(--bg-secondary-color);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    animation: dropdownFadeIn 0.2s ease-out;
+
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: var(--text-primary-color);
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s;
+      text-align: left;
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &[data-selected="true"] {
+        background-color: var(--accent-color);
+        color: white;
+
+        svg {
+          color: white;
+        }
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        color: var(--accent-color);
+      }
+    }
+
+    &-badge {
+      margin-left: auto;
+      background-color: rgba(0, 0, 0, 0.15);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 12px;
       font-weight: 700;
-      color: var(--accent-color);
+      color: white;
+    }
+  }
+
+  @keyframes dropdownFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
   &__langs {
-    margin-left: auto;
     display: flex;
     background-color: var(--bg-secondary-color);
     padding: 4px;
     border-radius: 12px;
     gap: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   &__lang {
     padding: 6px 12px;
-    border-radius: 10px;
-    font-size: 14px;
+    border-radius: 9px;
+    font-size: 13px;
     font-weight: 600;
-    color: var(--text-gray);
-    transition: all 0.2s;
+    color: var(--text-gray, #94a3b8);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
     &[data-active="true"] {
+      background-color: var(--bg-primary-color);
       color: var(--accent-color);
-    }
-  }
-
-  &__toggles {
-    display: flex;
-    gap: 12px;
-  }
-
-  &__toggle {
-    flex: 1;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border-radius: 16px;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-primary-color);
-    background-color: var(--bg-secondary-color);
-    transition: all 0.2s;
-
-    &--active {
-      background-color: var(--accent-color);
-      color: white;
-    }
-
-    svg {
-      width: 20px;
-      height: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
   }
 }

@@ -1,20 +1,29 @@
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/i18n-context";
 import { useAuth } from "@/contexts/auth-context";
+import { useTable } from "@/contexts/table-context";
+import { useOrderType } from "@/contexts/order-type-context";
+import { OrderTypeSelector } from "@/components/order-type-selector/order-type-selector";
 import "./profile-page.scss";
 
 export function ProfilePage(): React.ReactElement {
   const navigate = useNavigate();
   const { t, language } = useI18n();
   const { authData } = useAuth();
+  const { tableNumber, scanTable } = useTable();
+  const { orderType } = useOrderType();
 
   const menuItems = [
+    ...(orderType === "in_restaurant" ? [{
+      icon: "🪑",
+      label: tableNumber ? `${t.changeTable} (#${tableNumber})` : t.changeTable,
+      onClick: scanTable,
+    }] : []),
     {
       icon: "🏪",
       label: language === "ru" ? "Наши филиалы" : "Bizning filiallar",
       onClick: () => navigate("/branches"),
     },
-
     {
       icon: "💬",
       label: language === "ru" ? "Обратная связь" : "Fikr-mulohaza",
@@ -36,6 +45,7 @@ export function ProfilePage(): React.ReactElement {
     <div className="profile-page">
       <div className="profile-page__header">
         <h1 className="profile-page__title">{t.profileTitle}</h1>
+        <OrderTypeSelector align="right" />
       </div>
 
       <div
@@ -43,23 +53,23 @@ export function ProfilePage(): React.ReactElement {
         onClick={() => navigate("/about")}
       >
         <div className="profile-page__avatar">
-          {authData?.session?.organization?.logo ? (
+          {authData?.organization?.logo ? (
             <img
-              src={authData.session.organization.logo}
+              src={authData.organization.logo}
               alt="logo"
               className="profile-page__avatar-logo"
             />
-          ) : authData?.session?.organization?.logo_svg ? (
+          ) : authData?.organization?.logo_svg ? (
             <img
-              src={authData.session.organization.logo_svg}
+              src={authData.organization.logo_svg}
               alt="logo"
               className="profile-page__avatar-logo"
             />
           ) : (
             <span className="profile-page__avatar-letter">
               {(language === "ru"
-                ? authData?.session?.organization?.name_ru
-                : authData?.session?.organization?.name_uz
+                ? authData?.organization?.name_ru
+                : authData?.organization?.name_uz
               )?.charAt(0) || "R"}
             </span>
           )}
@@ -67,11 +77,11 @@ export function ProfilePage(): React.ReactElement {
         <div className="profile-page__user-info">
           <h2 className="profile-page__user-name">
             {language === "ru"
-              ? authData?.session?.organization?.name_ru
-              : authData?.session?.organization?.name_uz || "Restoran"}
+              ? authData?.organization?.name_ru
+              : authData?.organization?.name_uz || "Restoran"}
           </h2>
           <p className="profile-page__user-phone">
-            📍 {authData?.session?.organization?.adress_name || ""}
+            📍 {authData?.organization?.adress_name || ""}
           </p>
         </div>
       </div>
@@ -105,14 +115,14 @@ export function ProfilePage(): React.ReactElement {
         ))}
       </div>
 
-      {authData?.session?.organization?.telegram_account && (
+      {authData?.organization?.telegram_account && (
         <div className="profile-page__support">
           <p className="profile-page__support-label">{t.support}</p>
           <button
             className="profile-page__contact-btn"
             onClick={() => {
               const account =
-                authData.session.organization.telegram_account?.replace(
+                authData?.organization?.telegram_account?.replace(
                   "@",
                   "",
                 );

@@ -1,0 +1,152 @@
+.order-type-selector {
+  position: relative;
+  z-index: 1001;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-secondary-color);
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-primary-color);
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+
+    &[data-active="true"] {
+      border-color: var(--accent-color);
+      background-color: var(--bg-primary-color);
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      color: var(--accent-color);
+    }
+  }
+
+  &__label {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__chevron {
+    width: 16px !important;
+    height: 16px !important;
+    color: var(--text-gray, #94a3b8) !important;
+    opacity: 0.7;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    min-width: 220px;
+    background-color: var(--bg-secondary-color);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    animation: orderDropdownFadeIn 0.2s ease-out;
+
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: var(--text-primary-color);
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s;
+      text-align: left;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      width: 100%;
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &[data-selected="true"] {
+        background-color: var(--accent-color);
+        color: white;
+
+        svg {
+          color: white;
+        }
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        color: var(--accent-color);
+      }
+    }
+
+    &-badge {
+      margin-left: auto;
+      background-color: rgba(0, 0, 0, 0.15);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+    }
+
+    &-back {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-color);
+      background: rgba(var(--accent-color-rgb), 0.1);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      margin-bottom: 8px;
+      width: fit-content;
+
+      &:active {
+        opacity: 0.7;
+      }
+    }
+
+    &-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 8px 4px;
+    }
+  }
+
+  &--align-right {
+    .order-type-selector__dropdown {
+      left: auto;
+      right: 0;
+    }
+  }
+}
+
+@keyframes orderDropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

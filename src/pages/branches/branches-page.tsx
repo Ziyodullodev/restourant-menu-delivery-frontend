@@ -14,7 +14,7 @@ export function BranchesPage(): React.ReactElement {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const currentBranchId = authData?.session?.organization?.id;
+    const currentBranchId = authData?.organization?.id;
     if (!currentBranchId) return;
 
     fetchBranches(currentBranchId)

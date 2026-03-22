@@ -126,3 +126,13 @@ export interface IApiBranch {
   telegram_chat_id?: string;
   telegram_account?: string;
 }
+
+export interface IUserAddress {
+  id: string;
+  address_name: string;
+  latitude: string;
+  longitude: string;
+  user: number;
+  created_at: string;
+  updated_at: string;
+}

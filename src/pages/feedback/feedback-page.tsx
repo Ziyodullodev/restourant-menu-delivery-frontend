@@ -31,7 +31,7 @@ export function FeedbackPage(): React.ReactElement {
   };
 
   const handleSubmit = async () => {
-    const branchId = authData?.session?.organization?.id;
+    const branchId = authData?.organization?.id;
     if (!branchId || rating === 0) return;
 
     setIsSubmitting(true);

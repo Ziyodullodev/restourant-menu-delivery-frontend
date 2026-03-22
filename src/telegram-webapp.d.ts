@@ -75,6 +75,17 @@ interface TelegramWebApp {
   sendData: (data: string) => void;
   setHeaderColor: (color: string) => void;
   setBackgroundColor: (color: string) => void;
+  showScanQrPopup: (
+    params: { text?: string },
+    callback?: (text: string) => boolean | void,
+  ) => void;
+  closeScanQrPopup: () => void;
+  readTextFromClipboard: (callback: (text: string) => void) => void;
+  LocationManager: {
+    init: (callback?: () => void) => void;
+    getLocation: (callback: (data: { latitude: number; longitude: number; accuracy: number; } | null) => void) => void;
+    openSettings: () => void;
+  };
 }
 
 interface Window {

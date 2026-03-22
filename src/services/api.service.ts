@@ -6,6 +6,7 @@ import {
   IApiCartItem,
   IApiOrder,
   IApiBranch,
+  IUserAddress,
 } from "@/types/api.types";
 
 export type { ICartSummary };
@@ -174,6 +175,8 @@ export const createOrder = async (data: {
   restourant_session?: string | null;
   original_price: number;
   current_price: number;
+  order_phone_number?: string;
+  comment?: string;
 }): Promise<IApiOrder> => {
   const res = await fetch(`${BASE_URL}/r-client/order/order/create/`, {
     method: "POST",
@@ -220,4 +223,28 @@ export const createFeedback = async (data: {
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(`Feedback submission failed: ${res.status}`);
+};
+
+/** User manzillari ro'yxatini olish */
+export const fetchUserAddresses = async (): Promise<IUserAddress[]> => {
+  const res = await fetch(`${BASE_URL}/r-admin/user-address/`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error(`User addresses fetch failed: ${res.status}`);
+  return res.json();
+};
+
+/** Yangi manzil saqlash */
+export const createUserAddress = async (data: {
+  address_name: string;
+  latitude: string;
+  longitude: string;
+}): Promise<IUserAddress> => {
+  const res = await fetch(`${BASE_URL}/r-admin/user-address/`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`User address creation failed: ${res.status}`);
+  return res.json();
 };

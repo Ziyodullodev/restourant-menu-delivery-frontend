@@ -21,6 +21,7 @@ interface Translations {
   tableNumber: string;
   delivery: string;
   pickup: string;
+  inRestaurant: string;
 
   // Cart
   cartTitle: string;
@@ -49,6 +50,17 @@ interface Translations {
   support: string;
   contactUs: string;
   edit: string;
+  changeTable: string;
+  scannerTitle: string;
+  orderStatus: string;
+  selectBranch: string;
+  enterPhone: string;
+  selectLocation: string;
+  confirmLocation: string;
+  phonePlaceholder: string;
+  addressPlaceholder: string;
+  next: string;
+  back: string;
 
   // Common
   sum: string;
@@ -67,6 +79,7 @@ const translations: Record<Language, Translations> = {
     tableNumber: "Stol raqami",
     delivery: "Yetkazib berish",
     pickup: "Olib ketish",
+    inRestaurant: "Restoranda",
 
     // Cart
     cartTitle: "Savat",
@@ -95,6 +108,17 @@ const translations: Record<Language, Translations> = {
     support: "YORDAM",
     contactUs: "Biz bilan bog'lanish",
     edit: "Tahrirlash",
+    changeTable: "Stolni o'zgartirish",
+    scannerTitle: "QR kodni skanerlang",
+    orderStatus: "Buyurtma berish usuli",
+    selectBranch: "Filialni tanlang",
+    enterPhone: "Telefon raqamingizni kiriting",
+    selectLocation: "Yetkazib berish manzilingizni tanlang",
+    confirmLocation: "Manzilni tasdiqlash",
+    phonePlaceholder: "+998 90 123 45 67",
+    addressPlaceholder: "Manzilni kiriting yoki xaritadan tanlang",
+    next: "Keyingisi",
+    back: "Orqaga",
 
     // Common
     sum: "so'm",
@@ -111,6 +135,7 @@ const translations: Record<Language, Translations> = {
     tableNumber: "Номер стола",
     delivery: "Доставка",
     pickup: "Самовывоз",
+    inRestaurant: "В ресторане",
 
     // Cart
     cartTitle: "Корзина",
@@ -139,6 +164,17 @@ const translations: Record<Language, Translations> = {
     support: "ПОДДЕРЖКА",
     contactUs: "Связаться с нами",
     edit: "Редактировать",
+    changeTable: "Изменить стол",
+    scannerTitle: "Отсканируйте QR-код",
+    orderStatus: "Способ заказа",
+    selectBranch: "Выберите филиал",
+    enterPhone: "Введите ваш номер телефона",
+    selectLocation: "Выберите адрес доставки",
+    confirmLocation: "Подтвердить адрес",
+    phonePlaceholder: "+998 90 123 45 67",
+    addressPlaceholder: "Введите адрес или выберите на карте",
+    next: "Далее",
+    back: "Назад",
 
     // Common
     sum: "сум",

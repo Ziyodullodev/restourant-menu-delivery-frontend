@@ -9,6 +9,7 @@ import {
 import { IApiCategory, IApiProduct } from "@/types/api.types";
 import { fetchCategories, fetchProducts } from "@/services/api.service";
 import { useAuth } from "./auth-context";
+import { useOrderType } from "./order-type-context";
 
 interface MenuContextType {
   categories: IApiCategory[];
@@ -25,6 +26,7 @@ const MenuContext = createContext<MenuContextType | undefined>(undefined);
 
 export function MenuProvider({ children }: { children: ReactNode }) {
   const { authData } = useAuth();
+  const { orderType, selectedBranch } = useOrderType();
   const [categories, setCategories] = useState<IApiCategory[]>([]);
   const [products, setProducts] = useState<IApiProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,14 +41,19 @@ export function MenuProvider({ children }: { children: ReactNode }) {
     // Auth tayyor bo'lgunicha kutamiz
     if (!authData) return;
 
+    let branchId = authData.organization?.id;
+    if (orderType === "pickup" && selectedBranch) {
+       branchId = selectedBranch.id;
+    }
+
     const load = async () => {
       setIsLoading(true);
       setError(null);
       try {
         // Categories va Products ni parallel yuklaymiz
         const [cats, prods] = await Promise.all([
-          fetchCategories(),
-          fetchProducts(),
+          fetchCategories(branchId),
+          fetchProducts({ branch_id: branchId }),
         ]);
         setCategories(cats);
         setProducts(prods);
@@ -61,7 +68,7 @@ export function MenuProvider({ children }: { children: ReactNode }) {
     };
 
     load();
-  }, [authData, tick]);
+  }, [authData, tick, orderType, selectedBranch]);
 
   const getProductsByCategory = useCallback(
     (categoryId: string) => products.filter((p) => p.category === categoryId),

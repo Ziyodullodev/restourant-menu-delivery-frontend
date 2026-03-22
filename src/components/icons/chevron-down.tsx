@@ -1,6 +1,6 @@
 import { SVGProps } from "react";
 
-export function PickupIcon(props: SVGProps<SVGSVGElement>) {
+export function ChevronDown(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -11,10 +11,7 @@ export function PickupIcon(props: SVGProps<SVGSVGElement>) {
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M19 8v13" />
-      <path d="M19 8h3l1 5h-4z" />
+      <polyline points="6 9 12 15 18 9" />
     </svg>
   );
 }
