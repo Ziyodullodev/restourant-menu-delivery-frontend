@@ -10,9 +10,9 @@ export function ProfilePage(): React.ReactElement {
 
   const menuItems = [
     {
-      icon: "📍",
-      label: t.myAddresses,
-      onClick: () => console.log("My Addresses"),
+      icon: "🏪",
+      label: language === "ru" ? "Наши филиалы" : "Bizning filiallar",
+      onClick: () => navigate("/branches"),
     },
 
     {
