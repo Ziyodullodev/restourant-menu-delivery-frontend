@@ -50,7 +50,7 @@
 
   &__button {
     width: 100%;
-    background: #20ad4e;
+    background: var(--button-color);
     color: white;
     border: none;
     border-radius: 12px;
@@ -60,13 +60,9 @@
     cursor: pointer;
     transition: all 0.2s;
 
-    &:hover {
-      background: #1a8f42;
-      transform: translateY(-2px);
-    }
-
     &:active {
-      transform: translateY(0);
+      opacity: 0.85;
+      transform: translateY(1px);
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   IApiResponse,
   IApiCartItem,
   IApiOrder,
+  IApiBranch,
 } from "@/types/api.types";
 
 export type { ICartSummary };
@@ -43,6 +44,19 @@ export const fetchCategories = async (
   if (!res.ok) throw new Error(`Categories fetch failed: ${res.status}`);
   const data: IApiResponse<IApiCategory> = await res.json();
   return data.results; // Only returning results array
+};
+
+// ─── 1.1 Filiallar ro'yxati ────────────────────────────────────────────────
+export const fetchBranches = async (
+  branchId?: string,
+): Promise<IApiBranch[]> => {
+  const url = new URL(`${BASE_URL}/r-client/branches/`);
+  if (branchId) url.searchParams.set("branch_id", branchId);
+
+  const res = await fetch(url.toString(), { headers: authHeaders() });
+  if (!res.ok) throw new Error(`Branches fetch failed: ${res.status}`);
+  const data = await res.json();
+  return data.results || data;
 };
 
 // ─── 2. Mahsulotlar ro'yxati ─────────────────────────────────────────────────
@@ -191,4 +205,19 @@ export const fetchOrderDetail = async (orderId: string | number): Promise<IApiOr
   });
   if (!res.ok) throw new Error(`Order detail fetch failed: ${res.status}`);
   return res.json();
+};
+
+/** Fikr-mulohaza qoldirish */
+export const createFeedback = async (data: {
+  branch: string;
+  star_rating: number;
+  categories: string[];
+  comment: string;
+}): Promise<void> => {
+  const res = await fetch(`${BASE_URL}/r-client/feedback/`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`Feedback submission failed: ${res.status}`);
 };

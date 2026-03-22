@@ -1,0 +1,70 @@
+.privacy-page {
+  min-height: 100vh;
+  padding: 16px;
+  padding-bottom: 80px;
+  background: var(--bg-primary-color);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  &__back {
+    background: var(--card-bg);
+    border: none;
+    color: var(--text-primary-color);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+
+    &:active {
+      background: var(--card-btn-bg);
+      transform: scale(0.95);
+    }
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary-color);
+    margin: 0;
+  }
+
+  &__content {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  &__text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-primary-color);
+
+    h1, h2, h3 { color: var(--accent-color); margin-top: 1.5em; margin-bottom: 0.5em; }
+    p { margin-bottom: 1em; }
+    ul, ol { margin-left: 1.5em; margin-bottom: 1em; }
+    li { margin-bottom: 0.5em; }
+  }
+
+  &__loading {
+    padding: 100px 0;
+    text-align: center;
+    color: var(--text-gray);
+  }
+
+  &__empty {
+    padding: 100px 20px;
+    text-align: center;
+    color: var(--text-gray);
+  }
+}

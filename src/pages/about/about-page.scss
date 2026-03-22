@@ -119,6 +119,34 @@
     border-radius: 20px;
   }
 
+  &__working-time {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary-color);
+    background: var(--card-bg);
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  &__status {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 8px;
+
+    &--active {
+      background: rgba(76, 175, 80, 0.15);
+      color: #4caf50;
+    }
+
+    &--closed {
+      background: rgba(244, 67, 54, 0.15);
+      color: #f44336;
+    }
+  }
+
   // --- Section
   &__section {
     margin-bottom: 20px;
@@ -180,6 +208,9 @@
     &--phone { background: rgba(76, 175, 80, 0.15); }
     &--email { background: rgba(33, 150, 243, 0.15); }
     &--tg { background: rgba(0, 136, 204, 0.15); }
+    &--insta { background: rgba(225, 48, 108, 0.15); }
+    &--wa { background: rgba(37, 211, 102, 0.15); }
+    &--tg-channel { background: rgba(0, 136, 204, 0.15); }
   }
 
   &__contact-info {

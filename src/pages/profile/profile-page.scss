@@ -24,17 +24,32 @@
     padding: 20px;
     margin-bottom: 24px;
     position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:active {
+      transform: scale(0.98);
+      background-color: var(--card-btn-bg);
+    }
   }
 
   &__avatar {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: #20ad4e;
+    background: var(--accent-color);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  &__avatar-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: white;
   }
 
   &__avatar-letter {
@@ -64,21 +79,7 @@
     margin: 0;
   }
 
-  &__edit-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-primary-color);
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.2s;
 
-    &:hover {
-      opacity: 0.7;
-    }
-  }
 
   &__menu {
     display: flex;

@@ -43,7 +43,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #20ad4e;
+    background: var(--button-color);
     color: white;
     border: none;
     border-radius: 12px;
@@ -51,14 +51,15 @@
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
 
     svg {
       flex-shrink: 0;
     }
 
-    &:hover {
-      background: #1a8f42;
+    &:active {
+      opacity: 0.8;
+      transform: scale(0.98);
     }
   }
 
@@ -99,7 +100,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #20ad4e;
+    background: var(--button-color);
     color: white;
     border: none;
     border-radius: 12px;
@@ -107,15 +108,16 @@
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
     margin-bottom: 24px;
 
     svg {
       flex-shrink: 0;
     }
 
-    &:hover {
-      background: #1a8f42;
+    &:active {
+      opacity: 0.8;
+      transform: scale(0.98);
     }
   }
 

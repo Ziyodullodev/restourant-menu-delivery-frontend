@@ -34,6 +34,13 @@ interface Organization {
   updated_by: unknown;
   admin: number;
   organization: string;
+  working_start_time?: string;
+  working_end_time?: string;
+  telegram_channel?: string;
+  instagram?: string;
+  whatsapp?: string;
+  telegram_chat_id?: string;
+  telegram_account?: string;
 }
 
 interface Session {

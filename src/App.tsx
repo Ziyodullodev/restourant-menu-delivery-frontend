@@ -12,6 +12,9 @@ import { BankCardsPage } from "./pages/bank-cards/bank-cards-page";
 import { AboutPage } from "./pages/about/about-page";
 import { AuthProvider } from "./contexts/auth-context";
 import { MenuProvider } from "./contexts/menu-context";
+import { BranchesPage } from "./pages/branches/branches-page";
+import { PrivacyPage } from "./pages/privacy/privacy-page";
+import { FeedbackPage } from "./pages/feedback/feedback-page";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -39,6 +42,9 @@ export function App(): React.ReactElement {
                     <Route path="/orders" element={<OrdersPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/bank-cards" element={<BankCardsPage />} />
+                    <Route path="/branches" element={<BranchesPage />} />
+                    <Route path="/privacy" element={<PrivacyPage />} />
+                    <Route path="/feedback" element={<FeedbackPage />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>

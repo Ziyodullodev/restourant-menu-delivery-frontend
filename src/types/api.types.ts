@@ -102,3 +102,27 @@ export interface IApiOrder {
   user_adress?: string | null;
   restourant_session?: string | null;
 }
+
+export interface IApiBranch {
+  id: string;
+  name_uz: string;
+  name_ru: string;
+  name_en: string | null;
+  header_colour: string;
+  button_clour: string;
+  price_colour: string;
+  logo: string | null;
+  logo_svg: string | null;
+  is_active: boolean;
+  longitude: string;
+  latitude: string;
+  adress_name: string;
+  has_delivery: boolean;
+  working_start_time?: string;
+  working_end_time?: string;
+  telegram_channel?: string;
+  instagram?: string;
+  whatsapp?: string;
+  telegram_chat_id?: string;
+  telegram_account?: string;
+}

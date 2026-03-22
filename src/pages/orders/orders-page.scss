@@ -70,7 +70,7 @@
     transition: all 0.2s;
 
     &--active {
-      background: #20ad4e;
+      background: var(--accent-color);
       color: white;
     }
 

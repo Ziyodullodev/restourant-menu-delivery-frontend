@@ -51,7 +51,7 @@
   &__clear {
     background: transparent;
     border: none;
-    color: #20ad4e;
+    color: var(--accent-color);
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
@@ -124,12 +124,12 @@
   &__total-price {
     font-size: 20px;
     font-weight: 700;
-    color: #20ad4e;
+    color: var(--price-color);
   }
 
   &__order-btn {
     width: 100%;
-    background: #20ad4e;
+    background: var(--button-color);
     color: white;
     border: none;
     border-radius: 12px;
@@ -139,8 +139,8 @@
     cursor: pointer;
     transition: background 0.2s;
 
-    &:hover {
-      background: #e00450;
+    &:active {
+      opacity: 0.85;
     }
   }
 }
@@ -172,7 +172,7 @@
     position: absolute;
     top: -6px;
     left: -6px;
-    background: #20ad4e;
+    background: var(--accent-color);
     color: white;
     font-size: 12px;
     font-weight: 700;
@@ -223,7 +223,7 @@
   &__price {
     font-size: 16px;
     font-weight: 700;
-    color: #20ad4e;
+    color: var(--price-color);
   }
 
   &__controls {
@@ -243,18 +243,18 @@
     justify-content: center;
     width: 32px;
     height: 32px;
-    background: #20ad4e;
+    background: var(--button-color);
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, opacity 0.2s;
 
     svg {
       color: white;
     }
 
-    &:hover {
-      background: #e00450;
+    &:active {
+      opacity: 0.8;
     }
   }
 
