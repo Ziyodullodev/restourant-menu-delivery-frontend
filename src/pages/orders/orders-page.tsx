@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useI18n } from "@/contexts/i18n-context";
-import { useTable } from "@/contexts/table-context";
 import { fetchOrderHistory } from "@/services/api.service";
 import { IApiOrder, IApiOrderItem } from "@/types/api.types";
 import { numberDigits } from "@/helpers/number-digits";
@@ -12,22 +11,104 @@ type TabStatus = "all" | "active" | "delivering" | "completed";
 
 export function OrdersPage(): React.ReactElement {
   const { t, language } = useI18n();
-  const { tableNumber } = useTable();
   const { authData } = useAuth();
   const [activeTab, setActiveTab] = useState<TabStatus>("all");
   const [orders, setOrders] = useState<IApiOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  
+  // Pull to refresh states
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startY = useRef(0);
+  const PULL_THRESHOLD = 80;
+
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastOrderElementRef = useCallback((node: HTMLDivElement | null) => {
+    if (isLoading || isFetchingMore || isRefreshing) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prevPage => prevPage + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [isLoading, isFetchingMore, isRefreshing, hasMore]);
+
+  const loadOrders = async (pageNum: number, isInitial = false, isRefresh = false) => {
+    const branch = authData?.session?.organization?.id;
+    if (!branch && authData === null) return;
+
+    if (isInitial) setIsLoading(true);
+    if (isRefresh) setIsRefreshing(true);
+    if (!isInitial && !isRefresh) setIsFetchingMore(true);
+
+    try {
+      const data = await fetchOrderHistory({ branch, page: pageNum });
+      if (isInitial || isRefresh) {
+        setOrders(data.results);
+      } else {
+        setOrders(prev => [...prev, ...data.results]);
+      }
+      setHasMore(pageNum < data.pages);
+    } catch (err) {
+      console.error("Orders fetch error:", err);
+    } finally {
+      setIsLoading(false);
+      setIsFetchingMore(false);
+      setIsRefreshing(false);
+      setPullDistance(0);
+    }
+  };
 
   useEffect(() => {
-    const branch = authData?.session?.organization?.id;
-    if (!branch && authData === null) return; // Wait for auth if needed, but if authData is loaded and no branch, we can proceed or fail
-
-    setIsLoading(true);
-    fetchOrderHistory({ branch })
-      .then((data) => setOrders(data.results))
-      .catch((err) => console.error("Orders fetch error:", err))
-      .finally(() => setIsLoading(false));
+    setPage(1);
+    setHasMore(true);
+    loadOrders(1, true);
   }, [authData]);
+
+  useEffect(() => {
+    if (page > 1) {
+      loadOrders(page);
+    }
+  }, [page]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (window.scrollY === 0) {
+      startY.current = e.touches[0].pageY;
+      setIsDragging(true);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const currentY = e.touches[0].pageY;
+    const distance = currentY - startY.current;
+    if (distance > 0) {
+      setPullDistance(Math.min(distance * 0.5, PULL_THRESHOLD + 20));
+      if (distance > 10) {
+         if (e.cancelable) e.preventDefault();
+      }
+    } else {
+      setIsDragging(false);
+      setPullDistance(0);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    if (pullDistance >= PULL_THRESHOLD) {
+      setPage(1);
+      setHasMore(true);
+      loadOrders(1, false, true);
+    } else {
+      setPullDistance(0);
+    }
+  };
 
   const getFilteredOrders = () => {
     if (activeTab === "all") return orders;
@@ -53,16 +134,27 @@ export function OrdersPage(): React.ReactElement {
   ];
 
   return (
-    <div className="orders-page">
+    <div 
+      className="orders-page"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div 
+        className="orders-page__pull-indicator"
+        style={{ 
+          height: `${pullDistance}px`,
+          opacity: pullDistance / PULL_THRESHOLD,
+          transform: `scale(${Math.min(pullDistance / PULL_THRESHOLD, 1)})`
+        }}
+      >
+        <div className={`spinner spinner--small ${pullDistance >= PULL_THRESHOLD ? "spinner--active" : ""}`}></div>
+        <span>{pullDistance >= PULL_THRESHOLD ? t.releaseToRefresh || "Yangilash uchun qo'yib yuboring" : t.pullToRefresh || "Yangilash uchun torting"}</span>
+      </div>
+
       <div className="orders-page__header">
         <div className="orders-page__header-left">
           <h1 className="orders-page__title">{t.ordersTitle}</h1>
-          {tableNumber && (
-            <div className="orders-page__table">
-              <span className="orders-page__table-label">{t.table}</span>
-              <span className="orders-page__table-number">#{tableNumber}</span>
-            </div>
-          )}
         </div>
       </div>
 
@@ -73,55 +165,25 @@ export function OrdersPage(): React.ReactElement {
             className={`orders-page__tab ${activeTab === tab.id ? "orders-page__tab--active" : ""}`}
             onClick={() => setActiveTab(tab.id)}
           >
-            {tab.label} {tab.id === "all" && `(${orders.length})`}
+            {tab.label} {tab.id === "all" && orders.length > 0 && `(${orders.length})`}
           </button>
         ))}
       </div>
 
       <div className="orders-page__content">
-        {isLoading ? (
-          <div className="orders-page__loading">...</div>
+        {(isLoading && page === 1) || isRefreshing ? (
+          <div className="orders-page__loading">
+             <div className="spinner"></div>
+             <span>{isRefreshing ? "Yangilanmoqda..." : "Yuklanmoqda..."}</span>
+          </div>
         ) : filteredOrders.length === 0 ? (
           <div className="orders-page__empty">
             <div className="orders-page__empty-icon">
-              {/* SVG icon remains same */}
-              <svg
-                width="120"
-                height="120"
-                viewBox="0 0 120 120"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="20"
-                  y="30"
-                  width="80"
-                  height="70"
-                  rx="8"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  d="M35 30V25C35 20 40 15 50 15H70C80 15 85 20 85 25V30"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="60"
-                  cy="65"
-                  r="15"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  d="M60 58V72M53 65H67"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
+              <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="30" width="80" height="70" rx="8" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path d="M35 30V25C35 20 40 15 50 15H70C80 15 85 20 85 25V30" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+                <circle cx="60" cy="65" r="15" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path d="M60 58V72M53 65H67" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
               </svg>
             </div>
             <h2 className="orders-page__empty-title">{t.noOrders}</h2>
@@ -129,11 +191,16 @@ export function OrdersPage(): React.ReactElement {
           </div>
         ) : (
           <div className="orders-page__list">
-            {filteredOrders.map((order: IApiOrder) => {
+            {filteredOrders.map((order: IApiOrder, index) => {
               const displayId = String(order.id).length > 8 ? String(order.id).slice(0, 8).toUpperCase() : order.id;
+              const isLastElement = filteredOrders.length === index + 1;
               
               return (
-              <div key={order.id} className="order-card">
+              <div 
+                key={order.id} 
+                className="order-card"
+                ref={isLastElement ? lastOrderElementRef : null}
+              >
                 <div className="order-card__header">
                   <div className="order-card__header-left">
                     <span className="order-card__label">{t.ordersTitle?.split(" ")[0] || "Buyurtma"}</span>
@@ -183,6 +250,12 @@ export function OrdersPage(): React.ReactElement {
                 </div>
               </div>
             )})}
+            {isFetchingMore && (
+              <div className="orders-page__fetching-more">
+                 <div className="spinner spinner--small"></div>
+                 <span>Yuklanmoqda...</span>
+              </div>
+            )}
           </div>
         )}
       </div>

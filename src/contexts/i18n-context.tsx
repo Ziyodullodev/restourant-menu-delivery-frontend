@@ -40,6 +40,8 @@ interface Translations {
   completed: string;
   noOrders: string;
   noOrdersMessage: string;
+  pullToRefresh: string;
+  releaseToRefresh: string;
 
   // Profile
   profileTitle: string;
@@ -98,6 +100,8 @@ const translations: Record<Language, Translations> = {
     completed: "Bajarilgan",
     noOrders: "Buyurtmalar yo'q",
     noOrdersMessage: "Buyurtmalaringiz shu yerda ko'rinadi",
+    pullToRefresh: "Yangilash uchun torting",
+    releaseToRefresh: "Yangilash uchun qo'yib yuboring",
 
     // Profile
     profileTitle: "Profil",
@@ -154,6 +158,8 @@ const translations: Record<Language, Translations> = {
     completed: "Завершенные",
     noOrders: "Нет заказов",
     noOrdersMessage: "Ваши заказы появятся здесь",
+    pullToRefresh: "Потяните для обновления",
+    releaseToRefresh: "Отпустите для обновления",
 
     // Profile
     profileTitle: "Профиль",
