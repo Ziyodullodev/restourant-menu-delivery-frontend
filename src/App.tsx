@@ -68,6 +68,11 @@ export function App(): React.ReactElement {
     tg.ready();
     tg.expand();
     tg.enableClosingConfirmation();
+    if (typeof tg.disableVerticalSwipes === "function") {
+      tg.disableVerticalSwipes(); // 👈 mana shu kerak
+    } else {
+      console.warn("disableVerticalSwipes mavjud emas");
+    }
   }, []);
 
   return (
