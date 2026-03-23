@@ -7,6 +7,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/i18n-context";
 import { useCart } from "@/contexts/cart-context";
 
+const tg = window.Telegram.WebApp;
+
 export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,23 +27,35 @@ export function BottomNav() {
     },
   ];
 
+  const handleTabClick = (path: string) => {
+    if (location.pathname !== path) {
+      if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred("light");
+      }
+      navigate(path);
+    }
+  };
+
   return (
     <nav className="bottom-nav">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          className={`bottom-nav__item ${location.pathname === tab.path ? "bottom-nav__item--active" : ""}`}
-          onClick={() => navigate(tab.path)}
-        >
-          <div className="bottom-nav__icon">
-            {tab.icon}
-            {tab.id === "cart" && totalItems > 0 && (
-              <span className="bottom-nav__badge">{totalItems}</span>
-            )}
-          </div>
-          <span className="bottom-nav__label">{tab.label}</span>
-        </button>
-      ))}
+      {tabs.map((tab) => {
+        const isActive = location.pathname === tab.path;
+        return (
+          <button
+            key={tab.id}
+            className={`bottom-nav__item ${isActive ? "bottom-nav__item--active" : ""}`}
+            onClick={() => handleTabClick(tab.path)}
+          >
+            <div className="bottom-nav__icon">
+              {tab.icon}
+              {tab.id === "cart" && totalItems > 0 && (
+                <span className="bottom-nav__badge">{totalItems}</span>
+              )}
+            </div>
+            <span className="bottom-nav__label">{tab.label}</span>
+          </button>
+        );
+      })}
     </nav>
   );
 }

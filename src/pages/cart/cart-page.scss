@@ -101,7 +101,7 @@
 
   &__footer {
     position: fixed;
-    bottom: 80px;
+    bottom: var(--bottom-nav-height);
     left: 0;
     right: 0;
     background: var(--bg-secondary-color);

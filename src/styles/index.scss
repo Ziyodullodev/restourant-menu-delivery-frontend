@@ -19,7 +19,7 @@ body {
 }
 
 .main-content {
-  padding-bottom: 90px; // Spacing for BottomNav
+  padding-bottom: calc(var(--bottom-nav-height) + 16px); // Spacing for BottomNav
 }
 
 button {
