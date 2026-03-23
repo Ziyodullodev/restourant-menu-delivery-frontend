@@ -33,6 +33,38 @@ const authHeaders = () => {
   return headers;
 };
 
+const syncSessionFromResponse = (json: any) => {
+  if (json && typeof json === "object") {
+    const newSessionId =
+      json.restourant_session || json.session_id || json.session?.id;
+    const organization = json.organization || json.session?.restourant;
+    
+    const raw = localStorage.getItem("auth_data");
+    if (raw) {
+      try {
+        const parsedData = JSON.parse(raw);
+        let changed = false;
+
+        if (newSessionId && parsedData.session_id !== newSessionId) {
+          parsedData.session_id = newSessionId;
+          changed = true;
+        }
+
+        if (organization && JSON.stringify(parsedData.organization) !== JSON.stringify(organization)) {
+          parsedData.organization = organization;
+          changed = true;
+        }
+
+        if (changed) {
+          if (json.session) parsedData.session = json.session;
+          localStorage.setItem("auth_data", JSON.stringify(parsedData));
+          window.dispatchEvent(new Event("auth_data_updated"));
+        }
+      } catch (e) {}
+    }
+  }
+};
+
 // ─── 1. Kategoriyalar darakhti ───────────────────────────────────────────────
 
 export const fetchCategories = async (
@@ -43,8 +75,9 @@ export const fetchCategories = async (
 
   const res = await fetch(url.toString(), { headers: authHeaders() });
   if (!res.ok) throw new Error(`Categories fetch failed: ${res.status}`);
-  const data: IApiResponse<IApiCategory> = await res.json();
-  return data.results; // Only returning results array
+  const resData = await res.json();
+  syncSessionFromResponse(resData);
+  return resData.results; // Only returning results array
 };
 
 // ─── 1.1 Filiallar ro'yxati ────────────────────────────────────────────────
@@ -56,8 +89,9 @@ export const fetchBranches = async (
 
   const res = await fetch(url.toString(), { headers: authHeaders() });
   if (!res.ok) throw new Error(`Branches fetch failed: ${res.status}`);
-  const data = await res.json();
-  return data.results || data;
+  const resData = await res.json();
+  syncSessionFromResponse(resData);
+  return resData.results || resData;
 };
 
 // ─── 2. Mahsulotlar ro'yxati ─────────────────────────────────────────────────
@@ -73,8 +107,9 @@ export const fetchProducts = async (params?: {
 
   const res = await fetch(url.toString(), { headers: authHeaders() });
   if (!res.ok) throw new Error(`Products fetch failed: ${res.status}`);
-  const data: IApiResponse<IApiProduct> = await res.json();
-  return data.results; // Only returning results array
+  const resData = await res.json();
+  syncSessionFromResponse(resData);
+  return resData.results; // Only returning results array
 };
 
 // ─── 3. Savatcha qisqachasi ──────────────────────────────────────────────────
@@ -90,7 +125,7 @@ export const fetchCartSummary = async (): Promise<ICartSummary> => {
 // ─── 4. Savatcha boshqaruvi ───────────────────────────────────────────────────
 
 /** Savatga maxsulot qo'shish */
-export const createCartItem = async (data: {
+export const createCartItem = async (payload: {
   product: string;
   branch?: string;
   amount?: number;
@@ -100,8 +135,8 @@ export const createCartItem = async (data: {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify({
-      ...data,
-      amount: data.amount ?? 1,
+      ...payload,
+      amount: payload.amount ?? 1,
     }),
   });
 
@@ -110,11 +145,14 @@ export const createCartItem = async (data: {
       // Backend allaqachon mavjud bo'lsa 400 qaytaradi, lekin miqdorni o'zi oshiradi
       // Shuning uchun bu holatda error tashlamaymiz
       const errData = await res.json();
-      return errData;
+      syncSessionFromResponse(errData);
+      return errData as IApiCartItem;
     }
     throw new Error(`Cart create failed: ${res.status}`);
   }
-  return res.json();
+  const resData = await res.json();
+  syncSessionFromResponse(resData);
+  return resData as IApiCartItem;
 };
 
 /** Savatdagi element miqdorini o'zgartirish */
@@ -128,7 +166,9 @@ export const updateCartItem = async (
     body: JSON.stringify({ amount }),
   });
   if (!res.ok) throw new Error(`Cart update failed: ${res.status}`);
-  return res.json();
+  const data = await res.json();
+  syncSessionFromResponse(data);
+  return data;
 };
 
 /** Savatdan o'chirish */
@@ -184,7 +224,9 @@ export const createOrder = async (data: {
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(`Order placement failed: ${res.status}`);
-  return res.json();
+  const resData = await res.json();
+  syncSessionFromResponse(resData);
+  return resData;
 };
 
 /** Buyurtmalar tarixini olish */

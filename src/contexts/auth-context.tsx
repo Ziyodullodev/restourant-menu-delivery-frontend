@@ -129,12 +129,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(errData.detail || errData.message || "Failed to authenticate");
       }
 
-      const data: AuthData = await response.json();
+      const data: any = await response.json();
+
+      // Robust organization extraction
+      const foundOrg = data.organization || data.session?.restourant || data.session?.organization;
+      const foundOrgId = foundOrg?.id || foundOrg?.organization_id || (typeof foundOrg === "string" ? foundOrg : null);
       
+      const currentOrgId = authData?.organization?.id || authData?.organization?.organization;
       const isDifferentOrg = 
-         authData?.organization?.id && 
-         data.organization?.id && 
-         String(authData.organization.id) !== String(data.organization.id);
+         currentOrgId && 
+         foundOrgId && 
+         String(currentOrgId) !== String(foundOrgId);
 
       let finalData: AuthData;
 
@@ -142,7 +147,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          // Agar tashkilot o'zgargan bo'lsa, eskisini qoldirmasdan to'liq almashtiramiz
          finalData = {
             ...data,
-            table_id: tableId || data.table_id
+            organization: (typeof foundOrg === "object" ? foundOrg : { id: foundOrgId }),
+            table_id: tableId || data.table_id || data.session?.table_number_id
          } as AuthData;
          
          // Mahalliy savatchani tozalaymiz
@@ -151,29 +157,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          // Custom event yuboramiz, toki cart-context eshitib tozalab yuborsin
          window.dispatchEvent(new Event("organization_changed"));
       } else {
-         // Refreshed same org - merge defensively
+         // Refreshed same org OR fallback - merge defensively with cache
+         const mergedOrg = {
+            ...(authData?.organization || {}),
+            ...(typeof foundOrg === "object" ? foundOrg : {}),
+         } as Organization;
+
+         // Sync organization id if it was just a string
+         if (!mergedOrg.id && foundOrgId) mergedOrg.id = String(foundOrgId);
+
+         // Sync table info from top-level fields if provided
+         if (data.table_number) mergedOrg.table_number = data.table_number;
+         if (data.session?.table_number) mergedOrg.table_number = data.session.table_number;
+
          finalData = {
            ...(authData || {}), 
            ...data,
-           organization: data.organization || authData?.organization,
-           table_id: tableId || authData?.table_id
+           organization: mergedOrg,
          } as AuthData;
 
-         if (data.organization && authData?.organization) {
-             finalData.organization = {
-                 ...authData.organization,
-                 ...data.organization
-             };
-         }
-         
-         // Agar `/web` orqali kelsa va `session: null` qaytsa, 
+         if (data.table_id) finalData.table_id = data.table_id;
+         if (data.session?.table_number_id) finalData.table_id = data.session.table_number_id;
+         if (tableId) finalData.table_id = tableId;
+
+         // 1. Agar `/web` orqali kelsa va `session: null` qaytsa, 
          // lokal tashkilotni saqlab qolamiz ammo stol raqamini o'chirib tashlaymiz
          if (!tableId && data.session === null) {
              finalData.table_id = undefined;
-             if (finalData.organization) {
-                 finalData.organization.table_number = undefined;
-             }
+             finalData.organization.table_number = undefined;
          }
+      }
+
+      // 2. Agar storageda xam hech nima bo'lmasa kegin scannerga kirsin (App.tsx guard orqali)
+      if (!finalData.organization?.id) {
+         setAuthData(null);
+         localStorage.removeItem("auth_data");
+         return;
       }
 
       setAuthData(finalData);
@@ -206,7 +225,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const timer = setTimeout(() => {
         login(); // Do not pass authData?.table_id to avoid calling get-token/ on refresh
     }, 100);
-    return () => clearTimeout(timer);
+
+    const handleAuthUpdated = () => {
+      const cached = localStorage.getItem("auth_data");
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          setAuthData(parsed);
+          if (parsed.organization) {
+            const org = parsed.organization;
+            document.documentElement.style.setProperty("--accent-color", org.header_colour || "#F54927");
+            document.documentElement.style.setProperty("--price-color", org.price_colour || "#F54927");
+            document.documentElement.style.setProperty("--button-color", org.button_colour || org.button_clour || "#F54927");
+          }
+        } catch (e) {}
+      }
+    };
+    window.addEventListener("auth_data_updated", handleAuthUpdated);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("auth_data_updated", handleAuthUpdated);
+    };
   }, []);
 
   return (
