@@ -81,6 +81,7 @@ interface TelegramWebApp {
   ) => void;
   closeScanQrPopup: () => void;
   readTextFromClipboard: (callback: (text: string) => void) => void;
+  disableVerticalSwipes?: () => void;
   LocationManager: {
     init: (callback?: () => void) => void;
     getLocation: (callback: (data: { latitude: number; longitude: number; accuracy: number; } | null) => void) => void;
