@@ -229,7 +229,7 @@
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary-color);
 
-    &--new, &--New {
+    &--new, &--New, &--waiting, &--Waiting {
       background: rgba(33, 150, 243, 0.15);
       color: #2196f3;
     }
@@ -332,9 +332,40 @@
     letter-spacing: 0.5px;
   }
 
-  &__total-price {
+    &__total-price {
     font-size: 16px;
     font-weight: 700;
     color: var(--price-color, #F54927);
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  &__cancel-btn {
+    background: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.95);
+      background: rgba(255, 59, 48, 0.2);
+    }
+  }
+
+  &__status {
+    &--client_canceled, &--Client_canceled {
+      background: rgba(255, 59, 48, 0.1);
+      color: #ff3b30;
+    }
   }
 }

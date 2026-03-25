@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useI18n } from "@/contexts/i18n-context";
-import { fetchOrderHistory } from "@/services/api.service";
+import { fetchOrderHistory, cancelOrder } from "@/services/api.service";
 import { IApiOrder, IApiOrderItem } from "@/types/api.types";
+import { CancelOrderModal } from "@/components/cancel-order-modal/cancel-order-modal";
 import { numberDigits } from "@/helpers/number-digits";
 import "./orders-page.scss";
 
@@ -19,6 +20,10 @@ export function OrdersPage(): React.ReactElement {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  
+  // Cancel order state
+  const [cancelingOrder, setCancelingOrder] = useState<IApiOrder | null>(null);
+  const [isCanceling, setIsCanceling] = useState(false);
   
   // Pull to refresh states
   const [pullDistance, setPullDistance] = useState(0);
@@ -107,6 +112,23 @@ export function OrdersPage(): React.ReactElement {
       loadOrders(1, false, true);
     } else {
       setPullDistance(0);
+    }
+  };
+
+  const handleCancelOrder = async (reason: string) => {
+    if (!cancelingOrder) return;
+    setIsCanceling(true);
+    try {
+      await cancelOrder(cancelingOrder.id, reason);
+      // Refresh only current page or reload all? 
+      // Simplest is to reload the whole list to reflect status changes
+      loadOrders(1, false, true);
+      setCancelingOrder(null);
+    } catch (err) {
+      console.error("Cancel order error:", err);
+      alert(t.cancelNotAllowed);
+    } finally {
+      setIsCanceling(false);
     }
   };
 
@@ -248,6 +270,17 @@ export function OrdersPage(): React.ReactElement {
                     <span className="order-card__total-price">{numberDigits(order.current_price)} {t.sum}</span>
                   </div>
                 </div>
+
+                {["new", "waiting"].includes(order.status) && (
+                  <div className="order-card__actions">
+                    <button 
+                      className="order-card__cancel-btn"
+                      onClick={() => setCancelingOrder(order)}
+                    >
+                      {t.cancelOrder}
+                    </button>
+                  </div>
+                )}
               </div>
             )})}
             {isFetchingMore && (
@@ -259,6 +292,13 @@ export function OrdersPage(): React.ReactElement {
           </div>
         )}
       </div>
+
+      <CancelOrderModal
+        isOpen={!!cancelingOrder}
+        onClose={() => setCancelingOrder(null)}
+        onConfirm={handleCancelOrder}
+        isLoading={isCanceling}
+      />
     </div>
   );
 }

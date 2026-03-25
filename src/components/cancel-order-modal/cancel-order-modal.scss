@@ -1,0 +1,132 @@
+.cancel-order-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+.cancel-order-modal {
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px;
+  padding: 20px;
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--tg-theme-text-color, #000000);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+  @keyframes scaleIn {
+    from { 
+        transform: scale(0.9); 
+        opacity: 0;
+    }
+    to { 
+        transform: scale(1); 
+        opacity: 1;
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--tg-theme-hint-color, #999999);
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  &__content {
+    margin-bottom: 24px;
+  }
+
+  &__field {
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--tg-theme-hint-color, #999999);
+      margin-bottom: 8px;
+    }
+  }
+
+  &__textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+    background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+    color: var(--tg-theme-text-color, #000000);
+    font-size: 16px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: var(--tg-theme-button-color, #2481cc);
+    }
+  }
+
+  &__footer {
+    display: flex;
+    gap: 12px;
+  }
+
+  &__btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:active {
+      opacity: 0.8;
+    }
+
+    &--cancel {
+      background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+      color: var(--tg-theme-text-color, #000000);
+    }
+
+    &--confirm {
+      background-color: #f54927;
+      color: #ffffff;
+
+      &:disabled {
+        background-color: #f0f0f0;
+        color: #999999;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

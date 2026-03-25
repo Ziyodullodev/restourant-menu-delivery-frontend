@@ -64,6 +64,7 @@ export interface IApiCartItem {
 
 export type OrderStatus =
   | "new"
+  | "waiting"
   | "restourant_accepted"
   | "cooking"
   | "coked"
@@ -101,6 +102,7 @@ export interface IApiOrder {
   pay_with?: "cash" | "card" | "click" | "payme" | "uzumbank" | string;
   user_adress?: string | null;
   restourant_session?: string | null;
+  cancel_context?: string | null;
 }
 
 export interface IApiBranch {

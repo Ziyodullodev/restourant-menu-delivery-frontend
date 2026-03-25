@@ -252,6 +252,20 @@ export const fetchOrderDetail = async (orderId: string | number): Promise<IApiOr
   return res.json();
 };
 
+/** Buyurtmani bekor qilish */
+export const cancelOrder = async (orderId: string | number, reason: string): Promise<IApiOrder> => {
+  const res = await fetch(`${BASE_URL}/r-client/order/order/${orderId}/`, {
+    method: "PATCH",
+    headers: authHeaders(),
+    body: JSON.stringify({
+      status: "client_canceled",
+      cancel_context: reason,
+    }),
+  });
+  if (!res.ok) throw new Error(`Order cancellation failed: ${res.status}`);
+  return res.json();
+};
+
 /** Fikr-mulohaza qoldirish */
 export const createFeedback = async (data: {
   branch: string;

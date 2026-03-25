@@ -66,6 +66,13 @@ interface Translations {
 
   // Common
   sum: string;
+  cancelOrder: string;
+  cancelReasonTitle: string;
+  cancelReasonPlaceholder: string;
+  confirmCancel: string;
+  cancel: string;
+  cancelNotAllowed: string;
+  loading: string;
 }
 
 const translations: Record<Language, Translations> = {
@@ -126,6 +133,13 @@ const translations: Record<Language, Translations> = {
 
     // Common
     sum: "so'm",
+    cancelOrder: "Buyurtmani bekor qilish",
+    cancelReasonTitle: "Bekor qilish sababi",
+    cancelReasonPlaceholder: "Sababini kiriting...",
+    confirmCancel: "Tasdiqlash",
+    cancel: "Bekor qilish",
+    cancelNotAllowed: "Bu buyurtmani bekor qilib bo'lmaydi",
+    loading: "Yuklanmoqda...",
   },
   ru: {
     // Navigation
@@ -184,6 +198,13 @@ const translations: Record<Language, Translations> = {
 
     // Common
     sum: "сум",
+    cancelOrder: "Отменить заказ",
+    cancelReasonTitle: "Причина отмены",
+    cancelReasonPlaceholder: "Введите причину...",
+    confirmCancel: "Подтвердить",
+    cancel: "Отмена",
+    cancelNotAllowed: "Этот заказ нельзя отменить",
+    loading: "Загрузка...",
   },
 };
 
