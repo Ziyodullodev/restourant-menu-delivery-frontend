@@ -32,8 +32,13 @@ export function TableProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    if (authData?.organization?.table_number) {
-      const num = String(authData.organization.table_number);
+    const extractedTable = authData?.table_id 
+      || authData?.organization?.table_number 
+      || authData?.session?.table_number_id 
+      || authData?.session?.table_number;
+      
+    if (extractedTable) {
+      const num = String(extractedTable);
       setTableNumber(num);
       localStorage.setItem("tableNumber", num);
     } else {

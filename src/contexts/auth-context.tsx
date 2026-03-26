@@ -141,14 +141,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          foundOrgId && 
          String(currentOrgId) !== String(foundOrgId);
 
+      // Table ID resolution strategy: prioritize explicit parameter, then response fields, then session fields
+      const extractedTableNumber = tableId 
+        || data.table_id 
+        || data.table_number 
+        || data.session?.table_number_id 
+        || data.session?.table_number;
+
       let finalData: AuthData;
 
       if (isDifferentOrg) {
          // Agar tashkilot o'zgargan bo'lsa, eskisini qoldirmasdan to'liq almashtiramiz
+         const newOrg = { ...(typeof foundOrg === "object" ? foundOrg : { id: foundOrgId }) };
+         if (extractedTableNumber) newOrg.table_number = extractedTableNumber;
+
          finalData = {
             ...data,
-            organization: (typeof foundOrg === "object" ? foundOrg : { id: foundOrgId }),
-            table_id: tableId || data.table_id || data.session?.table_number_id
+            organization: newOrg,
+            table_id: extractedTableNumber
          } as AuthData;
          
          // Mahalliy savatchani tozalaymiz
@@ -166,9 +176,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          // Sync organization id if it was just a string
          if (!mergedOrg.id && foundOrgId) mergedOrg.id = String(foundOrgId);
 
-         // Sync table info from top-level fields if provided
-         if (data.table_number) mergedOrg.table_number = data.table_number;
-         if (data.session?.table_number) mergedOrg.table_number = data.session.table_number;
+         // Sync table info from resolved strategy
+         if (extractedTableNumber) mergedOrg.table_number = extractedTableNumber;
 
          finalData = {
            ...(authData || {}), 
@@ -176,9 +185,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
            organization: mergedOrg,
          } as AuthData;
 
-         if (data.table_id) finalData.table_id = data.table_id;
-         if (data.session?.table_number_id) finalData.table_id = data.session.table_number_id;
-         if (tableId) finalData.table_id = tableId;
+         if (extractedTableNumber) finalData.table_id = extractedTableNumber;
 
          // 1. Agar `/web` orqali kelsa va `session: null` qaytsa, 
          // lokal tashkilotni saqlab qolamiz ammo stol raqamini o'chirib tashlaymiz
