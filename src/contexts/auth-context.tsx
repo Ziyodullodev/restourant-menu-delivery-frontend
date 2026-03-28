@@ -195,7 +195,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          }
       }
 
-      // 2. Agar storageda xam hech nima bo'lmasa kegin scannerga kirsin (App.tsx guard orqali)
+      const cached = localStorage.getItem("auth_data");
+      let hasStorageOrg = false;
+      if (cached) {
+         try {
+             const parsed = JSON.parse(cached);
+             if (parsed?.organization?.id) hasStorageOrg = true;
+         } catch(e) {}
+      }
+
+      // 2. Agar session kelmasa va storageda ham restoranga oid malumotlar bolmasa, 
+      // scanner ochilishi uchun auth_data ni tozalaymiz.
+      if (!finalData.session && !hasStorageOrg) {
+         setAuthData(null);
+         localStorage.removeItem("auth_data");
+         return;
+      }
+
       if (!finalData.organization?.id) {
          setAuthData(null);
          localStorage.removeItem("auth_data");

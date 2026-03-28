@@ -31,6 +31,10 @@ export function OrderTypeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (authData) {
+      if (!authData.session) {
+         handleSetOrderType("pickup");
+      }
+      
       fetchBranches()
         .then((res) => {
           setBranches(res);
