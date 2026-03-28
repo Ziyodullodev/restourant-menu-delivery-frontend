@@ -33,6 +33,8 @@ export function OrderTypeProvider({ children }: { children: ReactNode }) {
     if (authData) {
       if (!authData.session) {
          handleSetOrderType("pickup");
+      } else {
+         handleSetOrderType("in_restaurant");
       }
       
       fetchBranches()
