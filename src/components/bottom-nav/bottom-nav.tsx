@@ -43,7 +43,7 @@ export function BottomNav() {
         return (
           <button
             key={tab.id}
-            className={`bottom-nav__item ${isActive ? "bottom-nav__item--active" : ""}`}
+            className={`bottom-nav__item ${isActive ? "bottom-nav__item--active" : ""} ${tab.id === "cart" ? "tour-cart-tab" : ""}`}
             onClick={() => handleTabClick(tab.path)}
           >
             <div className="bottom-nav__icon">

@@ -120,7 +120,7 @@ export function Card(props: IProps): React.ReactElement {
             </button>
           </div>
         ) : (
-          <button className="card__btn" onClick={handleAddClick}>
+          <button className="card__btn tour-add-cart" onClick={handleAddClick}>
             <span>{t.addToCart}</span>
             <PluseIcon width={18} height={18} />
           </button>

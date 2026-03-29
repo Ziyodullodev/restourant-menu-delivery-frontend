@@ -63,7 +63,7 @@ export function OrderTypeSelector({ align = "left" }: IProps) {
   return (
     <div className={`order-type-selector order-type-selector--align-${align}`} ref={dropdownRef}>
       <button 
-        className="order-type-selector__btn" 
+        className="order-type-selector__btn tour-order-type" 
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         data-active={isDropdownOpen}
       >

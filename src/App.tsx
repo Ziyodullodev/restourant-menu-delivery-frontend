@@ -20,6 +20,7 @@ import { FeedbackPage } from "./pages/feedback/feedback-page";
 
 import "swiper/css";
 import "swiper/css/pagination";
+import { OnboardingTour } from "./components/tour/onboarding-tour";
 
 const tg = window.Telegram.WebApp;
 
@@ -98,6 +99,7 @@ export function App(): React.ReactElement {
                         <Route path="*" element={<Navigate to="/" replace />} />
                       </Routes>
                       <BottomNav />
+                      <OnboardingTour />
                     </div>
                   </BrowserRouter>
                 </CartProvider>

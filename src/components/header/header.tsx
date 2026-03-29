@@ -20,7 +20,7 @@ export function Header(props: IProps): React.ReactElement {
       <div className="header__top">
         <OrderTypeSelector />
 
-        <div className="header__langs">
+        <div className="header__langs tour-lang-switcher">
           {(["ru", "uz"] as Language[]).map((l) => (
             <button
               key={l}
