@@ -236,18 +236,22 @@ export function OrdersPage(): React.ReactElement {
                 <div className="order-card__content">
                   <div className="order-card__items">
                     {order.items.map((item: IApiOrderItem) => {
-                      const pName = language === "uz" ? item.product.name_uz : (item.product.name_ru || item.product.name_uz);
+                      const product = item.product;
+                      const pName = product 
+                        ? (language === "uz" ? product.name_uz : (product.name_ru || product.name_uz))
+                        : (t.unknownProduct || "Mahsulot mavjud emas");
+                        
                       return (
                         <div key={item.id} className="order-card__item">
                           <div className="order-card__item-left">
-                            {item.product.small_image ? (
-                              <img src={item.product.small_image} alt={pName} className="order-card__item-img" />
+                            {product?.small_image ? (
+                              <img src={product.small_image} alt={pName} className="order-card__item-img" />
                             ) : (
                               <div className="order-card__item-placeholder">🍽️</div>
                             )}
                             <div className="order-card__item-info">
                               <span className="order-card__item-name">{pName}</span>
-                              <span className="order-card__item-price">{numberDigits(item.product.current_price)} {t.sum}</span>
+                              <span className="order-card__item-price">{numberDigits(product?.current_price || 0)} {t.sum}</span>
                             </div>
                           </div>
                           <div className="order-card__item-qty">

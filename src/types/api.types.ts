@@ -83,7 +83,7 @@ export interface IApiOrderItem {
     name_en?: string;
     current_price: number;
     small_image: string;
-  };
+  } | null;
   amount: number;
   created_at: string;
   ingredients: IApiAddon[];

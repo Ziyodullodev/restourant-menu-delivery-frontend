@@ -73,6 +73,7 @@ interface Translations {
   cancel: string;
   cancelNotAllowed: string;
   loading: string;
+  unknownProduct: string;
 }
 
 const translations: Record<Language, Translations> = {
@@ -140,6 +141,7 @@ const translations: Record<Language, Translations> = {
     cancel: "Bekor qilish",
     cancelNotAllowed: "Bu buyurtmani bekor qilib bo'lmaydi",
     loading: "Yuklanmoqda...",
+    unknownProduct: "Mahsulot topilmadi",
   },
   ru: {
     // Navigation
@@ -205,6 +207,7 @@ const translations: Record<Language, Translations> = {
     cancel: "Отмена",
     cancelNotAllowed: "Этот заказ нельзя отменить",
     loading: "Загрузка...",
+    unknownProduct: "Товар не найден",
   },
 };
 
