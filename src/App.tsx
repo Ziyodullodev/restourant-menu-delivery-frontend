@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { I18nProvider } from "./contexts/i18n-context";
 import { CartProvider } from "./contexts/cart-context";
 import { TableProvider, useTable } from "./contexts/table-context";
@@ -84,7 +84,7 @@ export function App(): React.ReactElement {
             <OrderTypeProvider>
               <MenuProvider>
                 <CartProvider>
-                  <BrowserRouter>
+                  <HashRouter>
                     <div className="app-container">
                       <Routes>
                         <Route path="/" element={<HomePage />} />
@@ -101,7 +101,7 @@ export function App(): React.ReactElement {
                       <BottomNav />
                       <OnboardingTour />
                     </div>
-                  </BrowserRouter>
+                  </HashRouter>
                 </CartProvider>
               </MenuProvider>
             </OrderTypeProvider>
