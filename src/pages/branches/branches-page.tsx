@@ -4,6 +4,7 @@ import { useI18n } from "@/contexts/i18n-context";
 import { useAuth } from "@/contexts/auth-context";
 import { fetchBranches } from "@/services/api.service";
 import { IApiBranch } from "@/types/api.types";
+import { useSwipeBack } from "@/helpers/use-swipe-back";
 import "./branches-page.scss";
 
 export function BranchesPage(): React.ReactElement {
@@ -12,6 +13,7 @@ export function BranchesPage(): React.ReactElement {
   const { authData } = useAuth();
   const [branches, setBranches] = useState<IApiBranch[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  useSwipeBack();
 
   useEffect(() => {
     const currentBranchId = authData?.organization?.id;

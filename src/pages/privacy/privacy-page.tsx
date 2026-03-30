@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/i18n-context";
 import { useAuth } from "@/contexts/auth-context";
+import { useSwipeBack } from "@/helpers/use-swipe-back";
 import "./privacy-page.scss";
 
 interface IPrivacyData {
@@ -19,6 +20,7 @@ export function PrivacyPage(): React.ReactElement {
   const { authData } = useAuth();
   const [data, setData] = useState<IPrivacyData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  useSwipeBack();
 
   useEffect(() => {
     const branchId = authData?.organization?.id;

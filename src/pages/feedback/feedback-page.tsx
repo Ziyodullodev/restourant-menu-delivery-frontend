@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/i18n-context";
 import { useAuth } from "@/contexts/auth-context";
 import { createFeedback } from "@/services/api.service";
+import { useSwipeBack } from "@/helpers/use-swipe-back";
 import "./feedback-page.scss";
 
 const FEEDBACK_CATEGORIES = [
@@ -23,6 +24,7 @@ export function FeedbackPage(): React.ReactElement {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  useSwipeBack();
 
   const toggleCategory = (id: string) => {
     setSelectedCategories((prev) =>

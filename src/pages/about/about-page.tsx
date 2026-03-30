@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/i18n-context";
 import { useAuth } from "@/contexts/auth-context";
+import { useSwipeBack } from "@/helpers/use-swipe-back";
 import "./about-page.scss";
 
 interface IAboutData {
@@ -38,6 +39,7 @@ export function AboutPage(): React.ReactElement {
   const { authData } = useAuth();
   const [data, setData] = useState<IAboutData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  useSwipeBack();
 
   useEffect(() => {
     const branchId = authData?.organization?.id;
