@@ -23,45 +23,83 @@ import "swiper/css/pagination";
 
 const tg = window.Telegram.WebApp;
 
+// function OrganizationGuard({ children }: { children: React.ReactNode }) {
+//   const { authData, isLoading } = useAuth();
+//   const { scanTable } = useTable();
+
+//   useEffect(() => {
+//      if (!isLoading && authData && !authData.organization) {
+//          scanTable();
+//      }
+//   }, [authData, isLoading, scanTable]);
+
+//   if (isLoading) {
+//     return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>Yuklanmoqda...</div>;
+//   }
+
+//   if (!authData?.organization) {
+//     const isDark = tg.colorScheme === "dark";
+//     return (
+//        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: isDark ? "#121212" : "#ffffff" }}>
+//           <button 
+//              onClick={scanTable}
+//              style={{ 
+//                background: "#F54927", 
+//                color: "#ffffff", 
+//                border: "none", 
+//                padding: "16px 32px", 
+//                borderRadius: 12, 
+//                fontSize: 16, 
+//                fontWeight: 600,
+//                boxShadow: "0 4px 12px rgba(245, 73, 39, 0.3)"
+//              }}
+//           >
+//              Stol raqamini skaner qilish
+//           </button>
+//        </div>
+//     );
+//   }
+
+//   return <>{children}</>;
+// }
+
+
 function OrganizationGuard({ children }: { children: React.ReactNode }) {
   const { authData, isLoading } = useAuth();
   const { scanTable } = useTable();
 
-  useEffect(() => {
-     if (!isLoading && authData && !authData.organization) {
-         scanTable();
-     }
-  }, [authData, isLoading, scanTable]);
-
+  // 1. Agar hali yuklanayotgan bo'lsa, hech narsa ko'rsatmaymiz (yoki loader)
   if (isLoading) {
-    return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>Yuklanmoqda...</div>;
-  }
-
-  if (!authData?.organization) {
-    const isDark = tg.colorScheme === "dark";
     return (
-       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: isDark ? "#121212" : "#ffffff" }}>
-          <button 
-             onClick={scanTable}
-             style={{ 
-               background: "#F54927", 
-               color: "#ffffff", 
-               border: "none", 
-               padding: "16px 32px", 
-               borderRadius: 12, 
-               fontSize: 16, 
-               fontWeight: 600,
-               boxShadow: "0 4px 12px rgba(245, 73, 39, 0.3)"
-             }}
-          >
-             Stol raqamini skaner qilish
-          </button>
-       </div>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        Yuklanmoqda...
+      </div>
     );
   }
 
-  return <>{children}</>;
+  // 2. Agar autentifikatsiya tugagan bo'lsa va authData.organization mavjud bo'lsa (yaroqli token)
+  // Hech qanday skanerlashni kutmasdan children (menu/home) ni ko'rsatamiz
+  if (authData && authData.organization) {
+    return <>{children}</>;
+  }
+
+  // 3. Agar authData bo'lmasa yoki organization ma'lumoti eskirgan/yo'q bo'lsa,
+  // faqat shu holatda skanerlash tugmasini ko'rsatamiz
+  const isDark = tg.colorScheme === "dark";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: isDark ? "#121212" : "#ffffff" }}>
+      <p style={{ marginBottom: "20px" }}>Iltimos, buyurtma berish uchun stol QR-kodini skanerlang.</p>
+      <button 
+         onClick={scanTable}
+         style={{ background: "#F54927", color: "#ffffff", border: "none", padding: "16px 32px", borderRadius: 12 }}
+      >
+         Stol raqamini skaner qilish
+      </button>
+    </div>
+  );
 }
+
+
 
 export function App(): React.ReactElement {
   useEffect(() => {
