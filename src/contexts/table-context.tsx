@@ -32,10 +32,10 @@ export function TableProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    const extractedTable = authData?.table_id 
-      || authData?.organization?.table_number 
-      || authData?.session?.table_number_id 
-      || authData?.session?.table_number;
+    const extractedTable =
+      authData?.organization?.table_number
+      || (authData?.session as Record<string, unknown> | undefined)?.table_number
+      || authData?.table_id;
       
     if (extractedTable) {
       const num = String(extractedTable);
@@ -100,8 +100,6 @@ export function TableProvider({ children }: { children: ReactNode }) {
       tg.showScanQrPopup({ text: t.scannerTitle }, (text) => {
         const tableId = extractTableId(text);
         if (tableId) {
-            setTableNumber(tableId);
-            localStorage.setItem("tableNumber", tableId);
             login(tableId).catch((err) => {
                alert(err.message || (language === "uz" ? "Xatolik yuz berdi" : "Произошла ошибка"));
             });
@@ -118,8 +116,6 @@ export function TableProvider({ children }: { children: ReactNode }) {
         if (manual) {
            const tableId = extractTableId(manual);
            if (tableId) {
-             setTableNumber(tableId);
-             localStorage.setItem("tableNumber", tableId);
              login(tableId).catch((err) => {
                alert(err.message || (language === "uz" ? "Xatolik yuz berdi" : "Произошла ошибка"));
              });

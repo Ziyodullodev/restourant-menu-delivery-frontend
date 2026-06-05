@@ -45,11 +45,12 @@ export function OrderTypeProvider({ children }: { children: ReactNode }) {
   }, [authData]);
 
   useEffect(() => {
-    // Agar stolda bo'lmasa lekin in_restaurant bo'lib qolgan bo'lsa, pickup ga qaytarish
-    if (orderType === "in_restaurant" && !tableNumber) {
+    if (tableNumber && orderType === "pickup") {
+      handleSetOrderType("in_restaurant");
+    } else if (!tableNumber && orderType === "in_restaurant") {
       handleSetOrderType("pickup");
     }
-  }, [tableNumber, orderType]);
+  }, [tableNumber]);
 
   const handleSetSelectedBranch = (branch: IApiBranch | null) => {
     setSelectedBranch(branch);

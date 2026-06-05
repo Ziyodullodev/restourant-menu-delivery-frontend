@@ -142,12 +142,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          foundOrgId &&
          String(currentOrgId) !== String(foundOrgId);
 
-      // Table ID resolution strategy: prioritize explicit parameter, then response fields, then session fields
-      const extractedTableNumber = tableId
-        || (data.table_id as string | undefined)
-        || (data.table_number as string | undefined)
+      // Table number resolution: check organization.table_number (get-token/ response),
+      // then session.table_number (web/ response), fallback to QR UUID
+      const dataOrg = (data.organization || dataSession?.organization) as Record<string, unknown> | undefined;
+      const extractedTableNumber =
+        (dataOrg?.table_number as string | undefined)
+        || (dataSession?.table_number as string | undefined)
         || (dataSession?.table_number_id as string | undefined)
-        || (dataSession?.table_number as string | undefined);
+        || (data.table_number as string | undefined)
+        || tableId
+        || (data.table_id as string | undefined);
 
       let finalData: AuthData;
 
