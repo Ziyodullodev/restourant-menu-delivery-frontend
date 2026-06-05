@@ -249,6 +249,7 @@ export function OrdersPage(): React.ReactElement {
                 <div className="order-card__content">
                   <div className="order-card__items">
                     {order.items.map((item: IApiOrderItem) => {
+                      if (!item.product) return null;
                       const pName = language === "uz" ? item.product.name_uz : (item.product.name_ru || item.product.name_uz);
                       return (
                         <div key={item.id} className="order-card__item">
