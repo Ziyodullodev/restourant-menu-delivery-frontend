@@ -44,7 +44,7 @@ export function OrdersPage(): React.ReactElement {
   }, [isLoading, isFetchingMore, isRefreshing, hasMore]);
 
   const loadOrders = async (pageNum: number, isInitial = false, isRefresh = false) => {
-    const branch = authData?.session?.organization?.id;
+    const branch = (authData?.session?.organization as Record<string, unknown> | undefined)?.id as string | undefined;
     if (!branch && authData === null) return;
 
     if (isInitial) setIsLoading(true);

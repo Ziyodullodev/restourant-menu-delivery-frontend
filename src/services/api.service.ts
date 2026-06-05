@@ -33,35 +33,35 @@ const authHeaders = () => {
   return headers;
 };
 
-const syncSessionFromResponse = (json: any) => {
-  if (json && typeof json === "object") {
-    const newSessionId =
-      json.restourant_session || json.session_id || json.session?.id;
-    const organization = json.organization || json.session?.restourant;
-    
-    const raw = localStorage.getItem("auth_data");
-    if (raw) {
-      try {
-        const parsedData = JSON.parse(raw);
-        let changed = false;
+const syncSessionFromResponse = (json: unknown) => {
+  if (!json || typeof json !== "object") return;
+  const data = json as Record<string, unknown>;
+  const session = data.session as Record<string, unknown> | undefined;
+  const newSessionId = data.restourant_session || data.session_id || session?.id;
+  const organization = data.organization || session?.restourant;
 
-        if (newSessionId && parsedData.session_id !== newSessionId) {
-          parsedData.session_id = newSessionId;
-          changed = true;
-        }
+  const raw = localStorage.getItem("auth_data");
+  if (raw) {
+    try {
+      const parsedData = JSON.parse(raw);
+      let changed = false;
 
-        if (organization && JSON.stringify(parsedData.organization) !== JSON.stringify(organization)) {
-          parsedData.organization = organization;
-          changed = true;
-        }
+      if (newSessionId && parsedData.session_id !== newSessionId) {
+        parsedData.session_id = newSessionId;
+        changed = true;
+      }
 
-        if (changed) {
-          if (json.session) parsedData.session = json.session;
-          localStorage.setItem("auth_data", JSON.stringify(parsedData));
-          window.dispatchEvent(new Event("auth_data_updated"));
-        }
-      } catch (e) {}
-    }
+      if (organization && JSON.stringify(parsedData.organization) !== JSON.stringify(organization)) {
+        parsedData.organization = organization;
+        changed = true;
+      }
+
+      if (changed) {
+        if (data.session) parsedData.session = data.session;
+        localStorage.setItem("auth_data", JSON.stringify(parsedData));
+        window.dispatchEvent(new Event("auth_data_updated"));
+      }
+    } catch {}
   }
 };
 

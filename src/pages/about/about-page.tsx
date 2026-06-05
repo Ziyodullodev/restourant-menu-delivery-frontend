@@ -74,7 +74,7 @@ export function AboutPage(): React.ReactElement {
     const [endH, endM] = endTime.split(":").map(Number);
 
     const startMinutes = startH * 60 + startM;
-    let endMinutes = endH * 60 + endM;
+    const endMinutes = endH * 60 + endM;
 
     if (endMinutes < startMinutes) {
       if (currentMinutes >= startMinutes || currentMinutes <= endMinutes) {

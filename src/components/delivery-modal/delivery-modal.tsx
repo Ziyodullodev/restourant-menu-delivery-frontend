@@ -3,6 +3,21 @@ import { useI18n } from "@/contexts/i18n-context";
 import { fetchUserAddresses, createUserAddress } from "@/services/api.service";
 import "./delivery-modal.scss";
 
+interface YMapsPlacemark {
+  geometry: {
+    setCoordinates(coords: [number, number]): void;
+    getCoordinates(): [number, number];
+  };
+  events: { add(event: string, handler: () => void): void };
+}
+
+interface YMapsMap {
+  destroy(): void;
+  getCenter(): [number, number];
+  geoObjects: { add(obj: YMapsPlacemark): void };
+  events: { add(event: string, handler: (e: { get(key: string): [number, number] }) => void): void };
+}
+
 interface DeliveryModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,8 +32,8 @@ export function DeliveryModal({ isOpen, onClose, onConfirm }: DeliveryModalProps
   const [coords, setCoords] = useState<[number, number] | null>(null);
   const [isResolvingAddress, setIsResolvingAddress] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<any>(null);
-  const placemarkRef = useRef<any>(null);
+  const mapInstance = useRef<YMapsMap | null>(null);
+  const placemarkRef = useRef<YMapsPlacemark | null>(null);
   const [comment, setComment] = useState("");
 
   useEffect(() => {
@@ -92,10 +107,10 @@ export function DeliveryModal({ isOpen, onClose, onConfirm }: DeliveryModalProps
   }, [isOpen, step, phone, address, isResolvingAddress, language]);
 
   useEffect(() => {
-    let map: any = null;
+    let map: YMapsMap | null = null;
 
     if (isOpen && step === "map" && mapRef.current) {
-        // @ts-ignore
+        // @ts-expect-error — Yandex Maps global, no official TS types
         const ymaps = window.ymaps;
         if (ymaps) {
             ymaps.ready(() => {
@@ -109,22 +124,22 @@ export function DeliveryModal({ isOpen, onClose, onConfirm }: DeliveryModalProps
                         zoom: 12,
                         controls: ['zoomControl', 'geolocationControl']
                     });
-                    mapInstance.current = map;
+                    const activeMap = map as YMapsMap;
+                    mapInstance.current = activeMap;
 
-                    const placemark = new ymaps.Placemark(map.getCenter(), {}, {
+                    const placemark = new ymaps.Placemark(activeMap.getCenter(), {}, {
                         preset: 'islands#redDotIconWithCaption',
                         draggable: true
                     });
 
                     placemarkRef.current = placemark;
-                    map.geoObjects.add(placemark);
+                    activeMap.geoObjects.add(placemark);
 
                     const updateAddress = (newCoords: [number, number]) => {
                         setCoords(newCoords);
                         setIsResolvingAddress(true);
                         const coordsString = `${newCoords[0]},${newCoords[1]}`;
-                        // @ts-ignore
-                        ymaps.geocode(coordsString).then((res: any) => {
+                        ymaps.geocode(coordsString).then((res: { geoObjects: { get(i: number): { getAddressLine(): string } | null } }) => {
                             const firstGeoObject = res.geoObjects.get(0);
                             if (firstGeoObject) {
                                 const fullAddr = firstGeoObject.getAddressLine();
@@ -135,9 +150,9 @@ export function DeliveryModal({ isOpen, onClose, onConfirm }: DeliveryModalProps
                         }).finally(() => setIsResolvingAddress(false));
                     };
 
-                    updateAddress(map.getCenter());
+                    updateAddress(activeMap.getCenter());
 
-                    map.events.add('click', (e: any) => {
+                    activeMap.events.add('click', (e: { get(key: string): [number, number] }) => {
                         const clickCoords = e.get('coords');
                         placemark.geometry.setCoordinates(clickCoords);
                         updateAddress(clickCoords);
@@ -147,7 +162,7 @@ export function DeliveryModal({ isOpen, onClose, onConfirm }: DeliveryModalProps
                        const dragCoords = placemark.geometry.getCoordinates();
                        updateAddress(dragCoords);
                     });
-                } catch (e: any) {
+                } catch (e: unknown) {
                     console.error("Map creation error:", e);
                 }
             });

@@ -30,7 +30,7 @@ export function CartPage(): React.ReactElement {
     }
   };
 
-  const handleDeliveryConfirm = (data: { phone: string; address: string; location?: any }) => {
+  const handleDeliveryConfirm = (data: { phone: string; address: string; location?: { lat: number; lng: number } }) => {
     setIsDeliveryModalOpen(false);
     performOrder({ address: data.address, phone: data.phone });
   };

@@ -48,7 +48,7 @@ interface AuthData {
   session_id: string;
   organization: Organization;
   user: User;
-  session?: any; // Add session property explicitly to AuthData
+  session?: Record<string, unknown>;
   table_id?: string;
 }
 
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           document.documentElement.style.setProperty("--button-color", org.button_colour || org.button_clour || "#F54927");
         }
         return parsed;
-      } catch (e) {
+      } catch {
         return null;
       }
     }
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("Telegram user ID not found");
       }
 
-      const body: any = {
+      const body: Record<string, string | number> = {
         telegram_chat_id: telegramId,
         first_name: user?.first_name || "",
         last_name: user?.last_name || "",
@@ -129,30 +129,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(errData.detail || errData.message || "Failed to authenticate");
       }
 
-      const data: any = await response.json();
+      const data = await response.json() as Record<string, unknown>;
+      const dataSession = data.session as Record<string, unknown> | null | undefined;
 
       // Robust organization extraction
-      const foundOrg = data.organization || data.session?.restourant || data.session?.organization;
-      const foundOrgId = foundOrg?.id || foundOrg?.organization_id || (typeof foundOrg === "string" ? foundOrg : null);
-      
+      const foundOrg = data.organization || dataSession?.restourant || dataSession?.organization;
+      const foundOrgId = (foundOrg as Record<string, unknown>)?.id || (foundOrg as Record<string, unknown>)?.organization_id || (typeof foundOrg === "string" ? foundOrg : null);
+
       const currentOrgId = authData?.organization?.id || authData?.organization?.organization;
-      const isDifferentOrg = 
-         currentOrgId && 
-         foundOrgId && 
+      const isDifferentOrg =
+         currentOrgId &&
+         foundOrgId &&
          String(currentOrgId) !== String(foundOrgId);
 
       // Table ID resolution strategy: prioritize explicit parameter, then response fields, then session fields
-      const extractedTableNumber = tableId 
-        || data.table_id 
-        || data.table_number 
-        || data.session?.table_number_id 
-        || data.session?.table_number;
+      const extractedTableNumber = tableId
+        || (data.table_id as string | undefined)
+        || (data.table_number as string | undefined)
+        || (dataSession?.table_number_id as string | undefined)
+        || (dataSession?.table_number as string | undefined);
 
       let finalData: AuthData;
 
       if (isDifferentOrg) {
          // Agar tashkilot o'zgargan bo'lsa, eskisini qoldirmasdan to'liq almashtiramiz
-         const newOrg = { ...(typeof foundOrg === "object" ? foundOrg : { id: foundOrgId }) };
+         const newOrg = { ...(typeof foundOrg === "object" ? foundOrg : { id: foundOrgId }) } as Partial<Organization>;
          if (extractedTableNumber) newOrg.table_number = extractedTableNumber;
 
          finalData = {
@@ -189,7 +190,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
          // 1. Agar `/web` orqali kelsa va `session: null` qaytsa, 
          // lokal tashkilotni saqlab qolamiz ammo stol raqamini o'chirib tashlaymiz
-         if (!tableId && data.session === null) {
+         if (!tableId && dataSession === null) {
              finalData.table_id = undefined;
              finalData.organization.table_number = undefined;
          }
@@ -219,8 +220,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         document.documentElement.style.setProperty("--price-color", org.price_colour || "#F54927");
         document.documentElement.style.setProperty("--button-color", org.button_colour || org.button_clour || "#F54927");
       }
-    } catch (err: any) {
-      setError(err.message || String(err));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
       console.error("Auth error:", err);
     } finally {
       setIsLoading(false);
@@ -245,7 +247,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             document.documentElement.style.setProperty("--price-color", org.price_colour || "#F54927");
             document.documentElement.style.setProperty("--button-color", org.button_colour || org.button_clour || "#F54927");
           }
-        } catch (e) {}
+        } catch {}
       }
     };
     window.addEventListener("auth_data_updated", handleAuthUpdated);

@@ -89,7 +89,7 @@ export function TableProvider({ children }: { children: ReactNode }) {
         if (url.searchParams.get("table")) return url.searchParams.get("table");
       }
       return null; // Not a valid table QR
-    } catch (e) {
+    } catch {
       return null;
     }
   };
