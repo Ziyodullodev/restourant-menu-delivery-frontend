@@ -138,16 +138,23 @@ export function DeliveryModal({ isOpen, onClose, onConfirm }: DeliveryModalProps
                     const updateAddress = (newCoords: [number, number]) => {
                         setCoords(newCoords);
                         setIsResolvingAddress(true);
-                        const coordsString = `${newCoords[0]},${newCoords[1]}`;
-                        ymaps.geocode(coordsString).then((res: { geoObjects: { get(i: number): { getAddressLine(): string } | null } }) => {
-                            const firstGeoObject = res.geoObjects.get(0);
-                            if (firstGeoObject) {
-                                const fullAddr = firstGeoObject.getAddressLine();
-                                setAddress(fullAddr);
-                            } else {
-                                setAddress(coordsString);
+                        ymaps.geocode(newCoords, { results: 1 }).then(
+                            (res: { geoObjects: { get(i: number): { getAddressLine(): string; properties: { get(key: string): string } } | null } }) => {
+                                const obj = res.geoObjects.get(0);
+                                if (obj) {
+                                    const name = obj.properties.get("name");
+                                    const description = obj.properties.get("description");
+                                    setAddress(description ? `${name}, ${description}` : name || obj.getAddressLine());
+                                } else {
+                                    setAddress("");
+                                }
+                                setIsResolvingAddress(false);
+                            },
+                            () => {
+                                setAddress("");
+                                setIsResolvingAddress(false);
                             }
-                        }).finally(() => setIsResolvingAddress(false));
+                        );
                     };
 
                     updateAddress(activeMap.getCenter());

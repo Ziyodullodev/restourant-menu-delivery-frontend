@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useOrderType } from "@/contexts/order-type-context";
 import { SuccessModal } from "@/components/success-modal/success-modal";
-import { DeliveryModal } from "@/components/delivery-modal/delivery-modal";
 import { CheckoutModal } from "@/components/checkout-modal/checkout-modal";
 import "./cart-page.scss";
 
@@ -18,21 +17,17 @@ export function CartPage(): React.ReactElement {
   const { t, language } = useI18n();
   const { orderType } = useOrderType();
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handlePlaceOrder = () => {
     if (orderType === "delivery") {
-        setIsDeliveryModalOpen(true);
+      navigate("/delivery/contact");
+    } else if (orderType === "pickup") {
+      navigate("/pickup/contact");
     } else {
-        setIsCheckoutModalOpen(true);
+      setIsCheckoutModalOpen(true);
     }
-  };
-
-  const handleDeliveryConfirm = (data: { phone: string; address: string; location?: { lat: number; lng: number } }) => {
-    setIsDeliveryModalOpen(false);
-    performOrder({ address: data.address, phone: data.phone });
   };
 
   const handleCheckoutConfirm = (data: { phone?: string; comment: string }) => {
@@ -175,12 +170,6 @@ export function CartPage(): React.ReactElement {
         isOpen={isSuccessModalOpen}
         onClose={handleSuccessConfirm}
         language={language}
-      />
-
-      <DeliveryModal
-        isOpen={isDeliveryModalOpen}
-        onClose={() => setIsDeliveryModalOpen(false)}
-        onConfirm={handleDeliveryConfirm}
       />
 
       {orderType !== "delivery" && (

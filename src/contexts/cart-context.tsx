@@ -51,6 +51,7 @@ interface CartContextType {
     comment?: string;
     phone?: string;
     address?: string;
+    branch?: string;
   }) => Promise<void>;
 }
 
@@ -287,11 +288,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     comment?: string;
     phone?: string;
     address?: string;
+    branch?: string;
   }) => {
     if (!authData) return;
     try {
       await createOrder({
-        branch: authData.organization?.id,
+        branch: orderData?.branch ?? authData.organization?.id,
         delivery_with: orderData?.delivery_with ?? (
           orderType === "delivery" ? "organization_delivery" : 
           orderType === "pickup" ? "take_away" : "in_restaurant"

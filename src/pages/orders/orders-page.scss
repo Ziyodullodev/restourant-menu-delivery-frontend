@@ -206,6 +206,28 @@
     display: flex;
     align-items: baseline;
     gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  &__delivery-type {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    line-height: 1.6;
+
+    &--delivery {
+      background: rgba(33, 150, 243, 0.15);
+      color: #2196f3;
+    }
+    &--pickup {
+      background: rgba(76, 175, 80, 0.15);
+      color: #4caf50;
+    }
+    &--restaurant {
+      background: rgba(255, 152, 0, 0.15);
+      color: #ff9800;
+    }
   }
 
   &__label {
@@ -314,9 +336,24 @@
     padding-top: 16px;
   }
 
+  &__footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
   &__date {
     font-size: 13px;
     color: var(--text-gray);
+  }
+
+  &__address {
+    font-size: 12px;
+    color: var(--text-gray);
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__total {

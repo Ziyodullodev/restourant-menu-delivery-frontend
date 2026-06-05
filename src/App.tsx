@@ -17,6 +17,9 @@ import { MenuProvider } from "./contexts/menu-context";
 import { BranchesPage } from "./pages/branches/branches-page";
 import { PrivacyPage } from "./pages/privacy/privacy-page";
 import { FeedbackPage } from "./pages/feedback/feedback-page";
+import { DeliveryContactPage } from "./pages/delivery-contact/delivery-contact-page";
+import { DeliveryMapPage } from "./pages/delivery-map/delivery-map-page";
+import { PickupContactPage } from "./pages/pickup-contact/pickup-contact-page";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -133,6 +136,9 @@ export function App(): React.ReactElement {
                         <Route path="/privacy" element={<PrivacyPage />} />
                         <Route path="/feedback" element={<FeedbackPage />} />
                         <Route path="/about" element={<AboutPage />} />
+                        <Route path="/delivery/contact" element={<DeliveryContactPage />} />
+                        <Route path="/delivery/map" element={<DeliveryMapPage />} />
+                        <Route path="/pickup/contact" element={<PickupContactPage />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                       </Routes>
                       <BottomNav />

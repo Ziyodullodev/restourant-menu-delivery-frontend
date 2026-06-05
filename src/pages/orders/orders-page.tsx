@@ -214,12 +214,20 @@ export function OrdersPage(): React.ReactElement {
         ) : (
           <div className="orders-page__list">
             {filteredOrders.map((order: IApiOrder, index) => {
-              const displayId = String(order.id).length > 8 ? String(order.id).slice(0, 8).toUpperCase() : order.id;
+              const displayId = String(order.id).slice(0, 4).toUpperCase();
               const isLastElement = filteredOrders.length === index + 1;
               
+              const deliveryTypeMap: Record<string, { label: string; mod: string }> = {
+                organization_delivery: { label: t.delivery, mod: "delivery" },
+                other_delivery:        { label: t.delivery, mod: "delivery" },
+                take_away:             { label: t.pickup,   mod: "pickup" },
+                in_restaurant:         { label: t.inRestaurant, mod: "restaurant" },
+              };
+              const deliveryBadge = order.delivery_with ? deliveryTypeMap[order.delivery_with] : null;
+
               return (
-              <div 
-                key={order.id} 
+              <div
+                key={order.id}
                 className="order-card"
                 ref={isLastElement ? lastOrderElementRef : null}
               >
@@ -227,6 +235,11 @@ export function OrdersPage(): React.ReactElement {
                   <div className="order-card__header-left">
                     <span className="order-card__label">{t.ordersTitle?.split(" ")[0] || "Buyurtma"}</span>
                     <span className="order-card__number">#{displayId}</span>
+                    {deliveryBadge && (
+                      <span className={`order-card__delivery-type order-card__delivery-type--${deliveryBadge.mod}`}>
+                        {deliveryBadge.label}
+                      </span>
+                    )}
                   </div>
                   <span className={`order-card__status order-card__status--${order.status}`}>
                     {order.status_display || order.status}
@@ -260,16 +273,24 @@ export function OrdersPage(): React.ReactElement {
                 </div>
 
                 <div className="order-card__footer">
-                  <div className="order-card__date">
-                    {new Date(order.created_at).toLocaleString(language === "uz" ? "uz-UZ" : "ru-RU", {
-                        day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
-                    })}
+                  <div className="order-card__footer-left">
+                    <div className="order-card__date">
+                      {new Date(order.created_at).toLocaleString(language === "uz" ? "uz-UZ" : "ru-RU", {
+                          day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
+                      })}
+                    </div>
+                    {order.user_adress?.address_name && (
+                      <div className="order-card__address">
+                        📍 {order.user_adress.address_name}
+                      </div>
+                    )}
                   </div>
                   <div className="order-card__total">
                     <span className="order-card__total-label">{t.total}</span>
                     <span className="order-card__total-price">{numberDigits(order.current_price)} {t.sum}</span>
                   </div>
                 </div>
+
 
                 {["new", "waiting"].includes(order.status) && (
                   <div className="order-card__actions">

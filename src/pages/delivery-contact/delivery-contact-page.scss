@@ -1,0 +1,108 @@
+.delivery-contact-page {
+  min-height: 100vh;
+  background: var(--bg-primary-color);
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    background: var(--bg-primary-color);
+    z-index: 10;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+  }
+
+  &__back {
+    background: transparent;
+    border: none;
+    color: var(--text-primary-color);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:active { opacity: 0.6; }
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary-color);
+    margin: 0;
+  }
+
+  &__body {
+    flex: 1;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-gray);
+  }
+
+  &__input,
+  &__textarea {
+    background: var(--bg-secondary-color);
+    border: 1.5px solid transparent;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 16px;
+    color: var(--text-primary-color);
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: var(--button-color);
+    }
+  }
+
+  &__textarea {
+    resize: none;
+    line-height: 1.5;
+  }
+
+  &__footer {
+    padding: 16px;
+    padding-bottom: 32px;
+  }
+
+  &__next-btn {
+    width: 100%;
+    height: 52px;
+    background: var(--button-color);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):active {
+      opacity: 0.85;
+    }
+  }
+}

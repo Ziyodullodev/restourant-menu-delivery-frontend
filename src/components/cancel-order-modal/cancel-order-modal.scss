@@ -119,7 +119,7 @@
     }
 
     &--confirm {
-      background-color: #f54927;
+      background-color: var(--button-color);
       color: #ffffff;
 
       &:disabled {

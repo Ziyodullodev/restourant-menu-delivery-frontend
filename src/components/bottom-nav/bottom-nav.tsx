@@ -36,6 +36,9 @@ export function BottomNav() {
     }
   };
 
+  const hidden = location.pathname.startsWith("/delivery/") || location.pathname.startsWith("/pickup/");
+  if (hidden) return null;
+
   return (
     <nav className="bottom-nav">
       {tabs.map((tab) => {

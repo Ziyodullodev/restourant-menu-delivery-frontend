@@ -89,6 +89,13 @@ export interface IApiOrderItem {
   ingredients: IApiAddon[];
 }
 
+export interface IApiOrderAddress {
+  id: string;
+  address_name: string;
+  latitude: string;
+  longitude: string;
+}
+
 export interface IApiOrder {
   id: string | number;
   organization_branches: number | string;
@@ -100,7 +107,7 @@ export interface IApiOrder {
   created_at: string;
   delivery_with?: "organization_delivery" | "other_delivery" | "take_away" | "in_restaurant";
   pay_with?: "cash" | "card" | "click" | "payme" | "uzumbank" | string;
-  user_adress?: string | null;
+  user_adress?: IApiOrderAddress | null;
   restourant_session?: string | null;
   cancel_context?: string | null;
 }
