@@ -12,6 +12,8 @@ interface OrderTypeContextType {
   selectedBranch: IApiBranch | null;
   setSelectedBranch: (branch: IApiBranch | null) => void;
   branches: IApiBranch[];
+  isOnlyMenu: boolean;
+  availableTypes: OrderType[];
 }
 
 const OrderTypeContext = createContext<OrderTypeContextType | undefined>(undefined);
@@ -44,6 +46,22 @@ export function OrderTypeProvider({ children }: { children: ReactNode }) {
     }
   }, [authData]);
 
+  const org = authData?.organization;
+  const availableTypes: OrderType[] = [
+    ...(org?.has_delivery ? ["delivery" as OrderType] : []),
+    ...(org?.has_pickup ? ["pickup" as OrderType] : []),
+    ...(org?.has_restourant ? ["in_restaurant" as OrderType] : []),
+  ];
+  const isOnlyMenu = availableTypes.length === 0;
+
+  // Auto-correct orderType if current one is not available
+  useEffect(() => {
+    if (isOnlyMenu) return;
+    if (!availableTypes.includes(orderType)) {
+      handleSetOrderType(availableTypes[0]);
+    }
+  }, [authData]);
+
   useEffect(() => {
     if (tableNumber && orderType === "pickup") {
       handleSetOrderType("in_restaurant");
@@ -70,12 +88,14 @@ export function OrderTypeProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <OrderTypeContext.Provider value={{ 
-      orderType, 
+    <OrderTypeContext.Provider value={{
+      orderType,
       setOrderType: handleSetOrderType,
       selectedBranch,
       setSelectedBranch: handleSetSelectedBranch,
-      branches
+      branches,
+      isOnlyMenu,
+      availableTypes,
     }}>
       {children}
     </OrderTypeContext.Provider>

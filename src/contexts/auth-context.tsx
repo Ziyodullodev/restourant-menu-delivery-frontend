@@ -30,6 +30,8 @@ interface Organization {
   latitude: string;
   adress_name: string;
   has_delivery: boolean;
+  has_pickup: boolean;
+  has_restourant: boolean;
   created_at: string;
   updated_at: string;
   created_by: unknown;

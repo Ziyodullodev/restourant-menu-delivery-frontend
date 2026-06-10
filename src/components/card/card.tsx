@@ -5,6 +5,7 @@ import { PluseIcon } from "../icons/pluse-icon";
 import { MinusIcon } from "../icons/minus-icon";
 import { useCart } from "@/contexts/cart-context";
 import { useI18n } from "@/contexts/i18n-context";
+import { useOrderType } from "@/contexts/order-type-context";
 import { IApiProduct, IApiAddon } from "@/types/api.types";
 import { ProductModal } from "../product-modal/product-modal";
 
@@ -16,6 +17,7 @@ export function Card(props: IProps): React.ReactElement {
   const { product } = props;
   const { addItem, updateQuantity, items } = useCart();
   const { t, language } = useI18n();
+  const { isOnlyMenu } = useOrderType();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const productName = language === "uz" ? product.name_uz : product.name_ru;
@@ -44,9 +46,15 @@ export function Card(props: IProps): React.ReactElement {
     setIsModalOpen(false);
   };
 
+  const hasIngredients = (product.ingredient_categories?.length ?? 0) > 0;
+
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    handleAddToCart(product, []);
+    if (hasIngredients) {
+      setIsModalOpen(true);
+    } else {
+      handleAddToCart(product, []);
+    }
   };
 
   const increment = (e: React.MouseEvent) => {
@@ -54,6 +62,8 @@ export function Card(props: IProps): React.ReactElement {
     if (cartItems.length > 0) {
       const lastItem = cartItems[cartItems.length - 1];
       updateQuantity(lastItem.id, lastItem.quantity + 1);
+    } else if (hasIngredients) {
+      setIsModalOpen(true);
     } else {
       handleAddToCart(product, []);
     }
@@ -109,7 +119,7 @@ export function Card(props: IProps): React.ReactElement {
           </div>
         </div>
 
-        {isCounterShow ? (
+        {!isOnlyMenu && (isCounterShow ? (
           <div className="card__counter">
             <button className="card__counter-btn" onClick={decrement}>
               <MinusIcon width={20} height={20} />
@@ -124,7 +134,7 @@ export function Card(props: IProps): React.ReactElement {
             <span>{t.addToCart}</span>
             <PluseIcon width={18} height={18} />
           </button>
-        )}
+        ))}
       </div>
 
       <ProductModal
@@ -132,6 +142,21 @@ export function Card(props: IProps): React.ReactElement {
         onClose={() => setIsModalOpen(false)}
         product={product}
         onAddToCart={handleAddToCart}
+        cartQuantity={totalQuantity}
+        onIncrement={() => {
+          if (cartItems.length > 0) {
+            const last = cartItems[cartItems.length - 1];
+            updateQuantity(last.id, last.quantity + 1);
+          } else {
+            handleAddToCart(product, []);
+          }
+        }}
+        onDecrement={() => {
+          if (cartItems.length > 0) {
+            const last = cartItems[cartItems.length - 1];
+            updateQuantity(last.id, last.quantity - 1);
+          }
+        }}
       />
     </>
   );

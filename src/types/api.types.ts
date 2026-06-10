@@ -28,6 +28,24 @@ export interface IApiAddon {
   price: number;
 }
 
+export interface IApiIngredient {
+  id: string;
+  name_uz: string;
+  name_ru: string;
+  name_en: string | null;
+  additional_price: number;
+}
+
+export interface IApiIngredientCategory {
+  id: string;
+  name_uz: string;
+  name_ru: string;
+  name_en: string | null;
+  category_type: "choice" | "select" | "multi-select";
+  is_required: boolean;
+  ingredients: IApiIngredient[];
+}
+
 export interface IApiProduct {
   id: string;
   category: string; // category id
@@ -46,6 +64,7 @@ export interface IApiProduct {
   estimate_time: number; // e.g. 4
   product_discount: Record<string, unknown>;
   addons?: IApiAddon[];
+  ingredient_categories?: IApiIngredientCategory[];
 }
 
 // ─── Cart Summary ────────────────────────────────────────────────────────────
@@ -127,6 +146,8 @@ export interface IApiBranch {
   latitude: string;
   adress_name: string;
   has_delivery: boolean;
+  has_pickup: boolean;
+  has_restourant: boolean;
   working_start_time?: string;
   working_end_time?: string;
   telegram_channel?: string;

@@ -6,6 +6,7 @@ import { ProfileIcon } from "../icons/profile-icon";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/i18n-context";
 import { useCart } from "@/contexts/cart-context";
+import { useOrderType } from "@/contexts/order-type-context";
 
 const tg = window.Telegram.WebApp;
 
@@ -14,11 +15,12 @@ export function BottomNav() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { totalItems } = useCart();
+  const { isOnlyMenu } = useOrderType();
 
   const tabs = [
     { id: "home", path: "/", label: t.home, icon: <HomeIcon /> },
-    { id: "cart", path: "/cart", label: t.cart, icon: <CartIcon /> },
-    { id: "orders", path: "/orders", label: t.orders, icon: <OrdersIcon /> },
+    ...(!isOnlyMenu ? [{ id: "cart", path: "/cart", label: t.cart, icon: <CartIcon /> }] : []),
+    ...(!isOnlyMenu ? [{ id: "orders", path: "/orders", label: t.orders, icon: <OrdersIcon /> }] : []),
     {
       id: "profile",
       path: "/profile",

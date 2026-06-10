@@ -1,7 +1,6 @@
 import { useOrderType, OrderType } from "@/contexts/order-type-context";
 import { useTable } from "@/contexts/table-context";
 import { useI18n } from "@/contexts/i18n-context";
-import { useAuth } from "@/contexts/auth-context";
 import { DeliveryIcon } from "../icons/delivery-icon";
 import { PickupIcon } from "../icons/pickup-icon";
 import { InRestaurantIcon } from "../icons/in-restaurant-icon";
@@ -14,16 +13,16 @@ interface IProps {
 }
 
 export function OrderTypeSelector({ align = "left" }: IProps) {
-  const { 
-    orderType, 
+  const {
+    orderType,
     setOrderType,
     selectedBranch,
     setSelectedBranch,
-    branches
+    branches,
+    availableTypes,
   } = useOrderType();
   const { tableNumber, scanTable } = useTable();
   const { t, language } = useI18n();
-  const { authData } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSelectingBranch, setIsSelectingBranch] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -77,13 +76,7 @@ export function OrderTypeSelector({ align = "left" }: IProps) {
           {!isSelectingBranch ? (
             <>
               {(["delivery", "pickup", "in_restaurant"] as OrderType[])
-                .filter(type => {
-                   if (type !== 'delivery') return true;
-                   // If pickup branch selected, check its has_delivery
-                   if (selectedBranch) return selectedBranch.has_delivery;
-                   // Fallback to session organization has_delivery
-                   return authData?.organization?.has_delivery ?? true;
-                })
+                .filter(type => availableTypes.includes(type))
                 .map((type) => (
                 <button
                   key={type}

@@ -21,6 +21,8 @@ interface IAboutData {
   latitude: string | null;
   adress_name: string | null;
   has_delivery: boolean;
+  has_pickup: boolean;
+  has_restourant: boolean;
   is_active: boolean;
   working_start_time?: string;
   working_end_time?: string;
@@ -134,13 +136,23 @@ export function AboutPage(): React.ReactElement {
               </div>
             )}
             <h2 className="about-page__name">{name}</h2>
-            {data.has_delivery && (
-              <div className="about-page__badge">
-                {language === "uz"
-                  ? "🚗 Yetkazib berish mavjud"
-                  : "🚗 Доставка доступна"}
-              </div>
-            )}
+            <div className="about-page__badges">
+              {data.has_delivery && (
+                <div className="about-page__badge">
+                  {language === "uz" ? "🚗 Yetkazib berish" : "🚗 Доставка"}
+                </div>
+              )}
+              {data.has_pickup && (
+                <div className="about-page__badge">
+                  {language === "uz" ? "🏪 Olib ketish" : "🏪 Самовывоз"}
+                </div>
+              )}
+              {data.has_restourant && (
+                <div className="about-page__badge">
+                  {language === "uz" ? "🍽️ Restoranda" : "🍽️ В ресторане"}
+                </div>
+              )}
+            </div>
             {(data.working_start_time || data.working_end_time) && (
               <div className="about-page__working-time">
                 🕒 {data.working_start_time?.slice(0, 5)} -{" "}

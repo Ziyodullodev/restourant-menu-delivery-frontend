@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      "trina-oligochaetous-rafael.ngrok-free.dev",
+      "earring-deluge-crispy.ngrok-free.dev",
       ".ngrok-free.dev"
     ],
   },
