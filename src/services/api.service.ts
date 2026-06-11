@@ -294,6 +294,7 @@ export const fetchUserAddresses = async (): Promise<IUserAddress[]> => {
 export const callWaiter = async (data: {
   branch_id: string;
   table_id?: string | null;
+  table_number?: number | string | null;
   reason: "check" | "clean_table" | "napkin" | "other";
   custom_reason?: string;
 }): Promise<{ status: string; id: number }> => {

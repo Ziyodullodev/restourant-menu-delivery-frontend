@@ -23,6 +23,7 @@ export function WaiterCallModal({ isOpen, onClose, tableId, branchId }: Props) {
 
   const effectiveBranchId = branchId || authData?.organization?.id || "";
   const effectiveTableId = tableId || authData?.table_id || null;
+  const effectiveTableNumber = authData?.organization?.table_number ?? null;
 
   useEffect(() => {
     if (!isOpen) {
@@ -48,6 +49,7 @@ export function WaiterCallModal({ isOpen, onClose, tableId, branchId }: Props) {
       await callWaiter({
         branch_id: effectiveBranchId,
         table_id: effectiveTableId,
+        table_number: effectiveTableNumber,
         reason: selected!,
         custom_reason: selected === "other" ? customText.trim() : undefined,
       });
