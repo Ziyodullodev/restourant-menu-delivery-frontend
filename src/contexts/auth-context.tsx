@@ -144,9 +144,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          foundOrgId &&
          String(currentOrgId) !== String(foundOrgId);
 
-      // Table number resolution: check organization.table_number (get-token/ response),
-      // then session.table_number (web/ response), fallback to QR UUID
       const dataOrg = (data.organization || dataSession?.organization) as Record<string, unknown> | undefined;
+
+      // Display uchun table_number (integer, masalan "5")
       const extractedTableNumber =
         (dataOrg?.table_number as string | undefined)
         || (dataSession?.table_number as string | undefined)
@@ -154,6 +154,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         || (data.table_number as string | undefined)
         || tableId
         || (data.table_id as string | undefined);
+
+      // API chaqiriqlar uchun table UUID — QR dan kelgan UUID birinchi
+      const extractedTableId =
+        tableId
+        || (data.table_id as string | undefined)
+        || (dataOrg?.table_number as string | undefined);
 
       let finalData: AuthData;
 
@@ -165,7 +171,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          finalData = {
             ...data,
             organization: newOrg,
-            table_id: extractedTableNumber
+            table_id: extractedTableId
          } as AuthData;
          
          // Mahalliy savatchani tozalaymiz
@@ -192,7 +198,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
            organization: mergedOrg,
          } as AuthData;
 
-         if (extractedTableNumber) finalData.table_id = extractedTableNumber;
+         if (extractedTableId) finalData.table_id = extractedTableId;
 
          // 1. Agar `/web` orqali kelsa va `session: null` qaytsa, 
          // lokal tashkilotni saqlab qolamiz ammo stol raqamini o'chirib tashlaymiz
