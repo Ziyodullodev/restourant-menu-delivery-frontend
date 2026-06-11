@@ -290,6 +290,22 @@ export const fetchUserAddresses = async (): Promise<IUserAddress[]> => {
   return res.json();
 };
 
+/** Ofitsant chaqirish */
+export const callWaiter = async (data: {
+  branch_id: string;
+  table_id?: string | null;
+  reason: "check" | "clean_table" | "napkin" | "other";
+  custom_reason?: string;
+}): Promise<{ status: string; id: number }> => {
+  const res = await fetch(`${BASE_URL}/r-client/waiter-call/`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`Waiter call failed: ${res.status}`);
+  return res.json();
+};
+
 /** Yangi manzil saqlash */
 export const createUserAddress = async (data: {
   address_name: string;
